@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Pick Your Glasses</title>
+	<script src="js/compatibility.js"></script>
+	<script src="js/smoother.js"></script>
+	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
+	<script src="../js/objectdetect.frontalface.js"></script>
+	<script>
+	
+	var smoother = new Smoother(0.85, [0, 0, 0, 0, 0]);
+		
+	$(window).load(function() {
+		try {
+			compatibility.getUserMedia({video: true}, function(stream) {
+				$("#video").get(0).src = compatibility.URL.createObjectURL(stream);
+				compatibility.requestAnimationFrame(tick);
+			}, function (error) {
+				alert("WebRTC not available");
+			});
+		} catch (error) {
+			alert(error);
+		}
+	});
+	
+	function tick() {
+		compatibility.requestAnimationFrame(tick);
+		
+		if ($("#video").get(0).readyState === video.HAVE_ENOUGH_DATA) {
+			$("#video").objectdetect("all", {scaleMin: 4, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
+				if (coords[0]) {
+					coords = coords[0];//smoother.smooth(coords[0]);
+					$("#glasses").css({
+						"left":    ~~(coords[0] + coords[2] * 1/8 + $("#video").offset().left) + "px",
+						"top":     ~~(coords[1] + coords[3] * 0.8/8 + $("#video").offset().top) + "px",
+						"width":   ~~(coords[2] * 6/8) + "px",
+						"height":  ~~(coords[3] * 6/8) + "px",
+						"display": "block"
+					});
+				} else {
+					$("#glasses").css("display", "none");
+				}
+			});
+		}
+	}
+	
+	function onGlassesClick(event) {
+		$("#glasses").get(0).src = window.event.srcElement.src;
+	}
+    </script>
+</head>
+
+<body>
+	<h1>Pick Your Glasses</h1>
+	<video id="video" style="float:left; margin-right:1em" autoplay="autoplay"></video>
+	<div>
+		<img src="img/sunglasses_0.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_1.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_2.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_3.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_4.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_5.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_6.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+		<img src="img/sunglasses_7.png" style="display:box; width:117px;" onclick="javascript:onGlassesClick()">
+	</div>
+	
+	<img id="glasses" src="img/sunglasses_0.png" style="position:absolute; display:none">
+	
+	Images are licensed under <img src="img/cc_by_sa_3.png"> by vectorarts.net
+</body>
+</html>
