@@ -32,9 +32,9 @@
 		if ($("#video").get(0).readyState === video.HAVE_ENOUGH_DATA) {
 			$("#video").objectdetect("all", {scaleMin: 4, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
 				if (coords[0]) {
-					coords = coords[0];//smoother.smooth(coords[0]);
+					coords = smoother.smooth(coords[0]);
 					$("#glasses").css({
-						"left":    ~~(coords[0] + coords[2] * 1/8 + $("#video").offset().left) + "px",
+						"left":    ~~(coords[0] + coords[2] * 1.0/8 + $("#video").offset().left) + "px",
 						"top":     ~~(coords[1] + coords[3] * 0.8/8 + $("#video").offset().top) + "px",
 						"width":   ~~(coords[2] * 6/8) + "px",
 						"height":  ~~(coords[3] * 6/8) + "px",
