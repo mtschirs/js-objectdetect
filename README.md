@@ -44,7 +44,7 @@ The provided jQuery plugin provides a simple interface to the object detection l
 	- [objectdetect.frontalface.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.frontalface.js)
 	- [objectdetect.eye.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.eye.js)
 	- [objectdetect.handopen.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handopen.js)
-	- [objectdetect.handclosed.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handfist.js)
+	- [objectdetect.handfist.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handfist.js)
 - The jQuery plugin:
 	- [jquery.objectdetect.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/jquery.objectdetect.js)
 
