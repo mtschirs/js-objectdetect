@@ -15,9 +15,9 @@ All modern browsers including IE 9+ are supported.
 
 *js-objectdetect* can be used for object detection, tracking and, in combination with mordern HTML5 features such as [WebRTC](http://caniuse.com/stream), for all sorts of augmented reality applications that run in the browser without any plugin.
 
-![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)
+![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)&nbsp;![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
 
-![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
+A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm).
 
 ### Usage - jQuery ###
 
@@ -44,10 +44,14 @@ The provided jQuery plugin provides a simple interface to the object detection l
 	- [objectdetect.frontalface.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.frontalface.js)
 	- [objectdetect.eye.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.eye.js)
 	- [objectdetect.handopen.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handopen.js)
-	- [objectdetect.handclosed.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handclosed.js)
+	- [objectdetect.handclosed.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handfist.js)
 - The jQuery plugin:
 	- [jquery.objectdetect.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/jquery.objectdetect.js)
 
 ### License ###
 
 *js-objectdetect* is distributed under [GPL3](https://github.com/mtschirs/js-objectdetect/LICENSE.txt). The included classifiers are subject to [their own licenses](https://github.com/mtschirs/js-objectdetect/CLASSIFIER-LICENSES.txt).
+
+### Credits ###
+
+Thanks to Audun Mathias Øygard ([auduno](https://github.com/auduno)) for his inspirational [headtrackr library](https://github.com/auduno/headtrackr) and Brandon Jones ([toji](https://github.com/toji)) for his valuable [javascript performance tipps](http://media.tojicode.com/sfjs-vectors/#1).
