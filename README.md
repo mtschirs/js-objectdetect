@@ -17,7 +17,7 @@ All modern browsers including IE 9+ are supported.
 
 ![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)&nbsp;![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
 
-A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm).
+A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm) (currently Chrome-only due to usage of WebRTC).
 
 ### Usage - jQuery ###
 
