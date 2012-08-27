@@ -36,6 +36,8 @@ The provided jQuery plugin provides a simple interface to the object detection l
 		});
 	</script>
 
+More examples can be found in [the repository](https://github.com/mtschirs/js-objectdetect/tree/master/examples).
+
 ### Download ###
 
 - The actual library:
