@@ -7,9 +7,9 @@ This library is based on the work of Paul Viola and Rainer Lienhart and compatib
 All modern browsers including IE 9+ are supported.
 
 ### Classifier ###
-All stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)).
+*js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
 
-![face](http://mtschirs.github.com/js-objectdetect/media/face.png) ![eye](http://mtschirs.github.com/js-objectdetect/media/eye.png) ![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png) ![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)
+![face](http://mtschirs.github.com/js-objectdetect/media/face.png)&nbsp;![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png)&nbsp;![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)&nbsp;![eye](http://mtschirs.github.com/js-objectdetect/media/eye.png)
 
 ### Examples ###
 
