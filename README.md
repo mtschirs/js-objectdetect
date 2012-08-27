@@ -15,7 +15,7 @@ All modern browsers including IE 9+ are supported.
 
 *js-objectdetect* can be used for object detection, tracking and, in combination with mordern HTML5 features such as [WebRTC](http://caniuse.com/stream), for all sorts of augmented reality applications that run in the browser without any plugin.
 
-![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)&nbsp;![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
+[![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)](http://www.youtube.com/watch?v=Y0HPCuRrb_M)&nbsp;[![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)](http://www.youtube.com/watch?v=tAkngqp3qzQ)
 
 A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm) (currently Chrome-only due to usage of WebRTC).
 
