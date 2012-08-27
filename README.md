@@ -50,7 +50,7 @@ The provided jQuery plugin provides a simple interface to the object detection l
 
 ### License ###
 
-*js-objectdetect* is distributed under [GPL3](https://github.com/mtschirs/js-objectdetect/LICENSE.txt). The included classifiers are subject to [their own licenses](https://github.com/mtschirs/js-objectdetect/CLASSIFIER-LICENSES.txt).
+*js-objectdetect* is distributed under [GPL3](https://raw.github.com/mtschirs/js-objectdetect/master/LICENSE.txt). The included classifiers are subject to [their own licenses](https://raw.github.com/mtschirs/js-objectdetect/master/CLASSIFIER-LICENSES.txt).
 
 ### Credits ###
 
