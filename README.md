@@ -7,17 +7,17 @@ This library is based on the work of Paul Viola and Rainer Lienhart and compatib
 All modern browsers including IE 9+ are supported.
 
 ### Classifier ###
-All stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)).
+*js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
 
-![face](http://mtschirs.github.com/js-objectdetect/media/face.png) ![eye](http://mtschirs.github.com/js-objectdetect/media/eye.png) ![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png) ![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)
+![face](http://mtschirs.github.com/js-objectdetect/media/face.png)&nbsp;![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png)&nbsp;![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)&nbsp;![eye](http://mtschirs.github.com/js-objectdetect/media/eye.png)
 
 ### Examples ###
 
 *js-objectdetect* can be used for object detection, tracking and, in combination with mordern HTML5 features such as [WebRTC](http://caniuse.com/stream), for all sorts of augmented reality applications that run in the browser without any plugin.
 
-![glasses](http://mtschirs.github.com/js-objectdetect/media/glasses.gif)
+![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)
 
-![gesture](http://mtschirs.github.com/js-objectdetect/media/gesture.gif)
+![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
 
 ### Usage - jQuery ###
 
