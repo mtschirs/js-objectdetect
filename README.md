@@ -15,9 +15,9 @@ All stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers fo
 
 *js-objectdetect* can be used for object detection, tracking and, in combination with mordern HTML5 features such as [WebRTC](http://caniuse.com/stream), for all sorts of augmented reality applications that run in the browser without any plugin.
 
-![glasses](http://mtschirs.github.com/js-objectdetect/media/glasses.gif)
+![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)
 
-![gesture](http://mtschirs.github.com/js-objectdetect/media/gesture.gif)
+![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)
 
 ### Usage - jQuery ###
 
