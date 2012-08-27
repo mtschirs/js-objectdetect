@@ -348,8 +348,7 @@ var objectdetect = (function() {
 						            ssat[satOffset + satHeight] +
 						            ssat[satOffset + windowWidth + satHeight]) * invArea - mean * mean;
 					
-					var std = variance > 0 ? Math.sqrt(variance) : 1;
-					std *= windowWidth * windowHeight;
+					var std = variance > 1 ? Math.sqrt(variance) : 1;
 					
 					// Evaluate cascade classifier: stages
 					var complexClassifiers = cascadeClassifier.complexClassifiers;
@@ -403,7 +402,7 @@ var objectdetect = (function() {
 								}
 							}
 
-							complexClassifierSum += (simpleClassifierSum < simpleClassifier.threshold * std) ? simpleClassifier.left_val : simpleClassifier.right_val;
+							complexClassifierSum += (simpleClassifierSum * invArea < simpleClassifier.threshold * std) ? simpleClassifier.left_val : simpleClassifier.right_val;
 							// Possible optimization if all values are positive:
 							// if (complexClassifierSum >= complexClassifierThreshold) break;
 						}

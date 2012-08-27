@@ -56,4 +56,4 @@ More examples can be found in [the repository](https://github.com/mtschirs/js-ob
 
 ### Credits ###
 
-Thanks to Audun Mathias Øygard ([auduno](https://github.com/auduno)) for his inspirational [headtrackr library](https://github.com/auduno/headtrackr) and Brandon Jones ([toji](https://github.com/toji)) for his valuable [javascript performance tipps](http://media.tojicode.com/sfjs-vectors/#1).
+Thanks to Audun Mathias Øygard ([auduno](https://github.com/auduno)) for his inspirational [headtrackr library](https://github.com/auduno/headtrackr), Brandon Jones ([toji](https://github.com/toji)) for his valuable [javascript performance tipps](http://media.tojicode.com/sfjs-vectors/#1) and Nikos ([foo123](https://github.com/foo123)) for his [port of JViolaJones](https://github.com/foo123/HAAR.js) on which the canny pruning algorithm is based on.
