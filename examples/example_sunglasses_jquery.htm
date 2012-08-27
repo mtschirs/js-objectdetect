@@ -3,12 +3,15 @@
 <head>
 	<meta charset="utf-8">
 	<title>Pick Your Glasses</title>
+	
 	<script src="js/compatibility.js"></script>
 	<script src="js/smoother.js"></script>
+	
+	<script src="js/objectdetect.js"></script>
+	<script src="js/objectdetect.frontalface.js"></script>
+	
 	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-	<script src="../js/objectdetect.js"></script>
-	<script src="../js/jquery.objectdetect.js"></script>
-	<script src="../js/objectdetect.frontalface.js"></script>
+	<script src="js/jquery.objectdetect.js"></script>
 	<script>
 	
 	var smoother = new Smoother(0.85, [0, 0, 0, 0, 0]);
@@ -30,7 +33,7 @@
 		compatibility.requestAnimationFrame(tick);
 		
 		if ($("#video").get(0).readyState === video.HAVE_ENOUGH_DATA) {
-			$("#video").objectdetect("all", {scaleMin: 4, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
+			$("#video").objectdetect("all", {scaleMin: 3, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
 				if (coords[0]) {
 					coords = smoother.smooth(coords[0]);
 					$("#glasses").css({
