@@ -4,7 +4,7 @@
 
 This library is based on the work of Paul Viola and Rainer Lienhart and compatible to stump based cascade classifiers used by the OpenCV object detector.
 
-All modern browsers including IE 9+ are supported.
+All modern browsers including IE 9+ and Opera Mobile are supported.
 
 ### Classifiers ###
 *js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
