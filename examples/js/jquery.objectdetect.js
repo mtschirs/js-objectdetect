@@ -36,7 +36,7 @@
 		},
      
 		all: function(options, callback) {
-			if (options) methods.init.apply(this, options);
+			if (options) methods.init.apply(this, [options]);
 			if (!options.classifier) throw "jQuery.objectdetect cannot operate without specified object classifier";
 			
 			return this.each(function() {

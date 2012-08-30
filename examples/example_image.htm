@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Image Example</title>
+	
+	<script src="js/compatibility.js"></script>
+	<script src="js/smoother.js"></script>
+	
+	<script src="js/objectdetect.js"></script>
+	<script src="js/objectdetect.frontalface.js"></script>
+	
+	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+	<script src="js/jquery.objectdetect.js"></script>
+	
+	<script>
+	$(window).load(function() {
+		$("#face").objectdetect("all", {classifier: objectdetect.frontalface}, function(coords) {
+			$("<div />", {
+				"css": {
+					"border":   "2px solid #F00",
+					"position":	"absolute",
+					"left":		($("#face").offset().left + coords[0][0]) + "px",
+					"top":		($("#face").offset().top  + coords[0][1]) + "px",
+					"width": 	coords[0][2] + "px",
+					"height": 	coords[0][3] + "px"
+				}
+			}).appendTo("body");
+		});
+	});
+	
+    </script>
+</head>
+
+<body>
+	<h1>Image</h1>
+	<img id="face" src="img/face.jpg">
+</body>
+</html>
