@@ -9,7 +9,7 @@ All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 ### Classifiers ###
 *js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
 
-![face](http://mtschirs.github.com/js-objectdetect/media/twofaces.png)&nbsp;![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png)&nbsp;![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)&nbsp;![eye](http://mtschirs.github.com/js-objectdetect/media/twoeyes.png)
+![face](http://mtschirs.github.com/js-objectdetect/media/twofaces.png)&nbsp;![upper body](http://mtschirs.github.com/js-objectdetect/media/upperbody.png)&nbsp;![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png)&nbsp;![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)&nbsp;![eye](http://mtschirs.github.com/js-objectdetect/media/twoeyes.png)
 
 ### Examples ###
 
