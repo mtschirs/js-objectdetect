@@ -62,8 +62,8 @@ var objectdetect = (function() {
 		 * 
 		 * @param {Array}  src      1-channel source image
 		 * @param {Number} srcWidth Width of the source image
-		 * @param {Array}  [dst]    1-channel destination image. If omitted, a
-		 * 							new destination image is created
+		 * @param {Array}  [dst]    1-channel destination image. If omitted,
+		 *                          a new image will be created
 		 * @return {Array} Destination image
 		 */
 		buffer = null,
@@ -138,8 +138,7 @@ var objectdetect = (function() {
 		 * @param {Array}  src       1-channel source image
 		 * @param {Number} srcWidth  Width of the source image
 		 * @param {Number} srcHeight Height of the source image
-		 * @param {Array}  [dst]     1-channel destination image. If omitted, the
-		 *                           result is written to src (faster)
+		 * @param {Array}  [dst]     1-channel destination image (optional)
 		 * @return {Array} Destination image
 		 */
 		computeSat = function(src, srcWidth, srcHeight, dst) {
@@ -272,7 +271,7 @@ var objectdetect = (function() {
 		 * 
 		 * @param {Array} src   1-channel source image
 		 * @param {Array} [dst] 1-channel destination image. If omitted, the
-		 * 	                    result is written to src (faster)
+		 * 	                    result is written to src
 		 * @return {Array} Destination image
 		 */
 		equalizeHistogram = function(src, dst) {
