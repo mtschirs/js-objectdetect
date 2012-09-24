@@ -9,7 +9,7 @@ var compatibility = (function() {
 		URL = window.URL || window.webkitURL,
 	
 		requestAnimationFrame = function(callback, element) {
-			requestAnimationFrame =
+			var requestAnimationFrame =
 				window.requestAnimationFrame		|| 
 				window.webkitRequestAnimationFrame	|| 
 				window.mozRequestAnimationFrame		|| 
@@ -28,7 +28,7 @@ var compatibility = (function() {
 		},
 		
 		getUserMedia = function(options, success, error) {
-			getUserMedia =
+			var getUserMedia =
 				window.navigator.getUserMedia ||
 				window.navigator.mozGetUserMedia ||
 				window.navigator.webkitGetUserMedia ||

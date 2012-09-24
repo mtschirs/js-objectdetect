@@ -2,25 +2,40 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Pick Your Glasses</title>
-	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-	<script src="../js/objectdetect.js"></script>
-	<script src="../js/jquery.objectdetect.js"></script>
-	<script src="../data/objectdetect.frontalface.js"></script>
-	<script>
+	<title>Image Example</title>
+
+	<script src="js/objectdetect.js"></script>
+	<script src="js/objectdetect.frontalface.js"></script>
+	<script src="js/objectdetect.eye.js"></script>
 	
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.objectdetect.js"></script>
+	
+	<script>
+	$.fn.highlight = function(rect, color) {
+		$("<div />", {
+			"css": {
+				"border":   "2px solid " + color,
+				"position":	"absolute",
+				"left":		($(this).offset().left + rect[0]) + "px",
+				"top":		($(this).offset().top  + rect[1]) + "px",
+				"width": 	rect[2] + "px",
+				"height": 	rect[3] + "px"
+			}
+		}).appendTo("body");
+	}
+		
 	$(window).load(function() {
-		$("#face").objectdetect("all", {classifier: objectdetect.frontalface}, function(coords) {
-			$("<div />", {
-				"css": {
-					"border":   "2px solid #FFF",
-					"position":	"absolute",
-					"left":		($("#face").offset().left + coords[0][0]) + "px",
-					"top":		($("#face").offset().top  + coords[0][1]) + "px",
-					"width": 	coords[0][2] + "px",
-					"height": 	coords[0][3] + "px"
-				}
-			}).appendTo("body");
+		$("#face").objectdetect("all", {classifier: objectdetect.frontalface}, function(faces) {
+			for (var i = 0; i < faces.length; ++i) {
+				$(this).highlight(faces[i], "red");
+			
+				$(this).objectdetect("all", {classifier: objectdetect.eye, selection: faces[i]}, function(eyes) {
+					for (var j = 0; j < eyes.length; ++j) {
+						$(this).highlight(eyes[j], "blue");
+					}
+				});
+			}
 		});
 	});
 	
@@ -28,8 +43,7 @@
 </head>
 
 <body>
-	<h1>Image</h1>
-	<img id="face" src="img/face.jpg">
-	<div id="image-result">
+	<h1>Faces and Eyes in Image</h1>
+	<img id="face" src="img/faces.jpg">
 </body>
 </html>
