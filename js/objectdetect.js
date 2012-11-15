@@ -269,7 +269,7 @@ var objectdetect = (function() {
 		 * Equalizes the histogram of an unsigned 1-channel image with values
 		 * in range [0, 255]. Corresponds to the equalizeHist OpenCV function.
 		 * 
-		 * @param {Array} src   1-channel source image
+		 * @param {Array} src   1-channel integer source image
 		 * @param {Array} [dst] 1-channel destination image. If omitted, the
 		 * 	                    result is written to src
 		 * @return {Array} Destination image
@@ -280,10 +280,8 @@ var objectdetect = (function() {
 			
 			// Compute histogram and histogram sum:
 			var hist = new ZeroFilledImageArray(256);
-			var sum = 0;
 			for (var i = 0; i < srcLength; ++i) {
-				++hist[~~src[i]];
-				++sum;
+				++hist[src[i]];
 			}
 			
 			// Compute integral histogram:
@@ -293,9 +291,9 @@ var objectdetect = (function() {
 			}
 			
 			// Equalize image:
-			var norm = 255 / sum;
+			var norm = 255 / srcLength;
 			for (var i = 0; i < srcLength; ++i) {
-				dst[i] = hist[~~src[i]] * norm;
+				dst[i] = hist[src[i]] * norm;
 			}
 			return dst;
 		},
