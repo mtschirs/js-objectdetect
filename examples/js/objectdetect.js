@@ -48,9 +48,9 @@ var objectdetect = (function() {
 		convertRgbaToGrayscale = function(src, dst) {
 			var srcLength = src.length;
 			if (!dst) { dst = new ImageArray(srcLength >> 2); }
-
+			
 			for (var i = 0; i < srcLength; i += 4) {
-			 	dst[i >> 2] = (src[i] * 4899 + src[i + 1] * 9617 + src[i + 2] * 8192) >> 14;
+				dst[i >> 2] = (src[i] * 4899 + src[i + 1] * 9617 + src[i + 2] * 8192 + 8192) >> 14;
 			}
 			return dst;
 		},
@@ -293,7 +293,7 @@ var objectdetect = (function() {
 			// Equalize image:
 			var norm = 255 / srcLength;
 			for (var i = 0; i < srcLength; ++i) {
-				dst[i] = hist[src[i]] * norm;
+				dst[i] = ~~(hist[src[i]] * norm + 0.5);
 			}
 			return dst;
 		},
@@ -565,18 +565,18 @@ var objectdetect = (function() {
 			return filteredGroups;
 		};
 	
-	return {
-		equalizeHistogram: equalizeHistogram,
-		convertRgbaToGrayscale: convertRgbaToGrayscale,
-		computeCanny: computeCanny,
-		computeSat: computeSat,
-		computeRsat: computeRsat,
-		computeSatSum: computeSatSum,
-		computeSquaredSat: computeSquaredSat,
-		computeRSatSum: computeRSatSum,
-		groupRectangles: groupRectangles,
-		detectMultiScale: detectMultiScale,
-		detectSingleScale: detectSingleScale,
-		detectFinestScale: detectFinestScale
-	};
+		return {
+			equalizeHistogram: equalizeHistogram,
+			convertRgbaToGrayscale: convertRgbaToGrayscale,
+			computeCanny: computeCanny,
+			computeSat: computeSat,
+			computeRsat: computeRsat,
+			computeSatSum: computeSatSum,
+			computeSquaredSat: computeSquaredSat,
+			computeRSatSum: computeRSatSum,
+			groupRectangles: groupRectangles,
+			detectMultiScale: detectMultiScale,
+			detectSingleScale: detectSingleScale,
+			detectFinestScale: detectFinestScale
+		};
 })();
