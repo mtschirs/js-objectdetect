@@ -48,9 +48,9 @@ var objectdetect = (function() {
 		convertRgbaToGrayscale = function(src, dst) {
 			var srcLength = src.length;
 			if (!dst) { dst = new ImageArray(srcLength >> 2); }
-			
+
 			for (var i = 0; i < srcLength; i += 4) {
-				dst[i >> 2] = src[i] * 0.299 + src[i+1] * 0.587 + src[i+2] * 0.114;
+			 	dst[i >> 2] = (src[i] * 306 + src[i + 1] * 601 + src[i + 2] * 117) >> 10;
 			}
 			return dst;
 		},
@@ -62,8 +62,8 @@ var objectdetect = (function() {
 		 * 
 		 * @param {Array}  src      1-channel source image
 		 * @param {Number} srcWidth Width of the source image
-		 * @param {Array}  [dst]    1-channel destination image. If omitted, a
-		 * 							new destination image is created
+		 * @param {Array}  [dst]    1-channel destination image. If omitted,
+		 *                          a new image will be created
 		 * @return {Array} Destination image
 		 */
 		buffer = null,
@@ -138,8 +138,7 @@ var objectdetect = (function() {
 		 * @param {Array}  src       1-channel source image
 		 * @param {Number} srcWidth  Width of the source image
 		 * @param {Number} srcHeight Height of the source image
-		 * @param {Array}  [dst]     1-channel destination image. If omitted, the
-		 *                           result is written to src (faster)
+		 * @param {Array}  [dst]     1-channel destination image (optional)
 		 * @return {Array} Destination image
 		 */
 		computeSat = function(src, srcWidth, srcHeight, dst) {
@@ -272,7 +271,7 @@ var objectdetect = (function() {
 		 * 
 		 * @param {Array} src   1-channel source image
 		 * @param {Array} [dst] 1-channel destination image. If omitted, the
-		 * 	                    result is written to src (faster)
+		 * 	                    result is written to src
 		 * @return {Array} Destination image
 		 */
 		equalizeHistogram = function(src, dst) {
@@ -348,8 +347,7 @@ var objectdetect = (function() {
 						            ssat[satOffset + satHeight] +
 						            ssat[satOffset + windowWidth + satHeight]) * invArea - mean * mean;
 					
-					var std = variance > 0 ? Math.sqrt(variance) : 1;
-					std *= windowWidth * windowHeight;
+					var std = variance > 1 ? Math.sqrt(variance) : 1;
 					
 					// Evaluate cascade classifier: stages
 					var complexClassifiers = cascadeClassifier.complexClassifiers;
@@ -403,7 +401,7 @@ var objectdetect = (function() {
 								}
 							}
 
-							complexClassifierSum += (simpleClassifierSum < simpleClassifier.threshold * std) ? simpleClassifier.left_val : simpleClassifier.right_val;
+							complexClassifierSum += (simpleClassifierSum * invArea < simpleClassifier.threshold * std) ? simpleClassifier.left_val : simpleClassifier.right_val;
 							// Possible optimization if all values are positive:
 							// if (complexClassifierSum >= complexClassifierThreshold) break;
 						}
