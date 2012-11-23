@@ -312,30 +312,28 @@ var objectdetect = (function() {
 		 * @return {Array} Rectangles representing detected object
 		 */
 		detectSingleScale = function(sat, rsat, ssat, cannySat, width, height, scale, cascadeClassifier) {
-			var windowWidth  = ~~(cascadeClassifier.size[0] * scale + 0.5);
-			var windowHeight = ~~(cascadeClassifier.size[1] * scale + 0.5);
+			var windowWidth  = ~~(cascadeClassifier.size[0] * scale);
+			var windowHeight = ~~(cascadeClassifier.size[1] * scale);
 			var stepX = ~~(0.5 * scale + 1.5); // = 2;
 			var stepY = ~~(0.5 * scale + 1.5); // = 2;
-			width += 1;
-			height += 1;
 
 			var rects = [];
-			for (var x = 0; x + windowWidth < width; x += stepX) {
-				for (var y = 0; y + windowHeight < height; y += stepY) {
+			for (var x = 0; x + windowWidth <= width; x += stepX) {
+				for (var y = 0; y + windowHeight <= height; y += stepY) {
 					
-					var invArea = 1 / ((cascadeClassifier.size[0] * scale) * (cascadeClassifier.size[1] * scale));
+					var invArea = 1 / (windowWidth * windowHeight);
 					
 					// Canny test:
 					if (cannySat) {
-						var edgesDensity = computeSatSum(cannySat, width, x, y, windowWidth, windowHeight) * invArea;
+						var edgesDensity = computeSatSum(cannySat, width + 1, x, y, windowWidth, windowHeight) * invArea;
 						if (edgesDensity < 20 || edgesDensity > 100) {
 							continue;
 						}
 					}
 					
 					// Correct?
-					var satOffset = x + y * width;
-					var satHeight = windowHeight * width;
+					var satOffset = x + y * (width + 1);
+					var satHeight = windowHeight * (width + 1);
 
 					var mean = (sat[satOffset] -
 							    sat[satOffset + windowWidth] -
@@ -348,7 +346,6 @@ var objectdetect = (function() {
 						            ssat[satOffset + windowWidth + satHeight]) * invArea - mean * mean;
 					
 					var std = variance > 1 ? Math.sqrt(variance) : 1;
-					
 					
 					// Evaluate cascade classifier: stages
 					var complexClassifiers = cascadeClassifier.complexClassifiers;
@@ -373,11 +370,11 @@ var objectdetect = (function() {
 									var feature = features[k];
 									
 									// Evaluate feature: rects
-									var featureOffset = ~~(x + feature[0] * scale + y + feature[1] * scale + 0.5) * width;
-									var featureWidth  = ~~(feature[2] * scale + 0.5);
-									var featureWidthTimesWidth  = ~~(feature[2] * scale + 0.5) * width;
-									var featureHeight = ~~(feature[3] * scale + 0.5);
-									var featureHeightTimesWidth = ~~(feature[3] * scale + 0.5) * width;
+									var featureOffset = ~~(x + feature[0] * scale) + ~~(y + feature[1] * scale) * (width + 1);
+									var featureWidth  = ~~(feature[2] * scale);
+									var featureWidthTimesWidth  = ~~(feature[2] * scale) * (width + 1);
+									var featureHeight = ~~(feature[3] * scale);
+									var featureHeightTimesWidth = ~~(feature[3] * scale) * (width + 1);
 							
 									simpleClassifierSum +=
 										(rsat[featureOffset] -
@@ -390,19 +387,15 @@ var objectdetect = (function() {
 									var feature = features[k];
 									
 									// Evaluate feature: rects
-									var featureOffset = ~~(x + feature[0] * scale + 0.5) + ~~(y + feature[1] * scale + 0.5) * width;
-									var featureWidth  = ~~(feature[2] * scale + 0.5);
-									var featureHeight = ~~(feature[3] * scale + 0.5) * width;
-									
-									if (sat[featureOffset + featureWidth + featureHeight] === undefined) {
-										alert("NOOOOOOOOOOO");
-									}
+									var featureOffset = ~~(x + feature[0] * scale) + ~~(y + feature[1] * scale) * (width + 1);
+									var featureWidth  = ~~(feature[2] * scale);
+									var featureHeight = ~~(feature[3] * scale) * (width + 1);
 									
 									simpleClassifierSum +=
 										(sat[featureOffset] -
 										 sat[featureOffset + featureWidth] -
 										 sat[featureOffset + featureHeight] +
-										 sat[featureOffset + featureWidth + featureHeight]) * feature[4];									
+										 sat[featureOffset + featureWidth + featureHeight]) * feature[4];
 								}
 							}
 
@@ -476,149 +469,7 @@ var objectdetect = (function() {
 			}
 			return rects;
 		},
-		_group_func = function(r1, r2) {
-            var distance = (r1[2] * 0.25 + 0.5)|0;
-
-            return r2[0] <= r1[0] + distance &&
-                   r2[0] >= r1[0] - distance &&
-                   r2[1] <= r1[1] + distance &&
-                   r2[1] >= r1[1] - distance &&
-                   r2[2] <= (r1[2] * 1.5 + 0.5)|0 &&
-                   (r2[2] * 1.5 + 0.5)|0 >= r1[2];
-        },
 	    
-		groupRectangles = function(rects, min_neighbors) {
-            var i, j, n = rects.length;
-            var node = [];
-            for (i = 0; i < n; ++i) {
-                node[i] = {"parent" : -1,
-                           "element" : rects[i],
-                           "rank" : 0};
-            }
-            for (i = 0; i < n; ++i) {
-                if (!node[i].element)
-                    continue;
-                var root = i;
-                while (node[root].parent != -1)
-                    root = node[root].parent;
-                for (j = 0; j < n; ++j) {
-                    if( i != j && node[j].element && _group_func(node[i].element, node[j].element)) {
-                        var root2 = j;
-
-                        while (node[root2].parent != -1)
-                            root2 = node[root2].parent;
-
-                        if(root2 != root) {
-                            if(node[root].rank > node[root2].rank)
-                                node[root2].parent = root;
-                            else {
-                                node[root].parent = root2;
-                                if (node[root].rank == node[root2].rank)
-                                node[root2].rank++;
-                                root = root2;
-                            }
-
-                            /* compress path from node2 to the root: */
-                            var temp, node2 = j;
-                            while (node[node2].parent != -1) {
-                                temp = node2;
-                                node2 = node[node2].parent;
-                                node[temp].parent = root;
-                            }
-
-                            /* compress path from node to the root: */
-                            node2 = i;
-                            while (node[node2].parent != -1) {
-                                temp = node2;
-                                node2 = node[node2].parent;
-                                node[temp].parent = root;
-                            }
-                        }
-                    }
-                }
-            }
-            var idx_seq = [];
-            var class_idx = 0;
-            for(i = 0; i < n; i++) {
-                j = -1;
-                var node1 = i;
-                if(node[node1].element) {
-                    while (node[node1].parent != -1)
-                        node1 = node[node1].parent;
-                    if(node[node1].rank >= 0)
-                        node[node1].rank = ~class_idx++;
-                    j = ~node[node1].rank;
-                }
-                idx_seq[i] = j;
-            }
-            
-            var comps = [];
-            for (i = 0; i < class_idx+1; ++i) {
-                comps[i] = {"neighbors" : 0,
-                            "x" : 0,
-                            "y" : 0,
-                            "width" : 0,
-                            "height" : 0,
-                            "confidence" : 0};
-            }
-
-            // count number of neighbors
-            for(i = 0; i < n; ++i) {
-                var r1 = rects[i];
-                var idx = idx_seq[i];
-
-                if (comps[idx].neighbors == 0)
-                    comps[idx].confidence = r1.confidence;
-
-                ++comps[idx].neighbors;
-
-                comps[idx].x += r1[0];
-                comps[idx].y += r1[1];
-                comps[idx].width += r1[2];
-                comps[idx].height += r1[3];
-                comps[idx].confidence = Math.max(comps[idx].confidence, r1.confidence);
-            }
-
-            var seq2 = [];
-            // calculate average bounding box
-            for(i = 0; i < class_idx; ++i) {
-                n = comps[i].neighbors;
-                if (n >= min_neighbors)
-                    seq2.push({0 : (comps[i].x * 2 + n) / (2 * n),
-                               1 : (comps[i].y * 2 + n) / (2 * n),
-                               2 : (comps[i].width * 2 + n) / (2 * n),
-                               3 : (comps[i].height * 2 + n) / (2 * n),
-                               "neighbors" : comps[i].neighbors,
-                               "confidence" : comps[i].confidence});
-            }
-
-            var result_seq = [];
-            n = seq2.length;
-            // filter out small face rectangles inside large face rectangles
-            for(i = 0; i < n; ++i) {
-                var r1 = seq2[i];
-                var flag = true;
-                for(j = 0; j < n; ++j) {
-                    var r2 = seq2[j];
-                    var distance = (r2[2] * 0.25 + 0.5)|0;
-
-                    if(i != j &&
-                       r1[0] >= r2[0] - distance &&
-                       r1[1] >= r2[1] - distance &&
-                       r1[0] + r1[2] <= r2[0] + r2[2] + distance &&
-                       r1[1] + r1[3] <= r2[1] + r2[3] + distance &&
-                       (r2.neighbors > Math.max(3, r1.neighbors) || r1.neighbors < 3)) {
-                        flag = false;
-                        break;
-                    }
-                }
-
-                if(flag)
-                    result_seq.push(r1);
-            }
-            return result_seq;
-        },
-        
 		/**
 		 * Groups rectangles together using a rectilinear distance metric. For
 		 * each group of related rectangles, a representative mean rectangle
@@ -628,7 +479,7 @@ var objectdetect = (function() {
 		 * @param {Number} minNeighbors 
 		 * @return {Array}              Mean rectangles (Arrays of 4 floats)
 		 */
-		groupRectangles_OLD = function(rects, minNeighbors) {
+		groupRectangles = function(rects, minNeighbors) {
 			var rectsLength = rects.length;
 			
 	    	// Partition rects into similarity classes:
@@ -711,7 +562,7 @@ var objectdetect = (function() {
 		        	filteredGroups.push(r1);
 		        }
 		    }
-			return groups;
+			return filteredGroups;
 		};
 	
 		return {
