@@ -50,7 +50,7 @@ var objectdetect = (function() {
 			if (!dst) { dst = new ImageArray(srcLength >> 2); }
 			
 			for (var i = 0; i < srcLength; i += 4) {
-				dst[i >> 2] = (src[i] * 4899 + src[i + 1] * 9617 + src[i + 2] * 8192 + 8192) >> 14;
+				dst[i >> 2] = (src[i] * 4899 + src[i + 1] * 9617 + src[i + 2] * 1868 + 8192) >> 14;
 			}
 			return dst;
 		},

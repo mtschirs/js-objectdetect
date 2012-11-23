@@ -30,11 +30,11 @@
 			for (var i = 0; i < faces.length; ++i) {
 				$(this).highlight(faces[i], "red");
 			
-				$(this).objectdetect("all", {classifier: objectdetect.eye, selection: faces[i]}, function(eyes) {
+				/*$(this).objectdetect("all", {classifier: objectdetect.eye, selection: faces[i]}, function(eyes) {
 					for (var j = 0; j < eyes.length; ++j) {
 						$(this).highlight(eyes[j], "blue");
 					}
-				});
+				});*/
 			}
 		});
 	});
@@ -44,6 +44,6 @@
 
 <body>
 	<h1>Faces and Eyes in Image</h1>
-	<img id="face" src="img/faces.jpg">
+	<img id="face" src="img/faces2.png">
 </body>
 </html>
