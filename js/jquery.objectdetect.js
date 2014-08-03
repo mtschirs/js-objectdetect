@@ -1,3 +1,10 @@
+/**
+ * jQuery-Plugin for the real-time object detector based on the Viola Jones
+ * Framework. Compatible to OpenCV Haar Cascade Classifiers (stump based only).
+ * 
+ * Copyright 2014 Martin Tschirsich
+ * Released under the MIT license
+ */
 (function($) {
 	
 	var methods = {
