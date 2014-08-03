@@ -4,12 +4,12 @@
 	<meta charset="utf-8">
 	<title>Image Example</title>
 
-	<script src="js/objectdetect.js"></script>
-	<script src="js/objectdetect.frontalface.js"></script>
-	<script src="js/objectdetect.eye.js"></script>
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/objectdetect.frontalface.js"></script>
+	<script src="../js/objectdetect.eye.js"></script>
 	
 	<script src="js/jquery.js"></script>
-	<script src="js/jquery.objectdetect.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
 	
 	<script>
 	$.fn.highlight = function(rect, color) {
@@ -30,11 +30,6 @@
 			for (var i = 0; i < faces.length; ++i) {
 				$(this).highlight(faces[i], "red");
 			
-				$(this).objectdetect("all", {classifier: objectdetect.eye, selection: faces[i]}, function(eyes) {
-					for (var j = 0; j < eyes.length; ++j) {
-						$(this).highlight(eyes[j], "blue");
-					}
-				});
 			}
 		});
 	});
@@ -43,7 +38,7 @@
 </head>
 
 <body>
-	<h1>Faces and Eyes in Image</h1>
+	<h1>Detect Faces</h1>
 	<img id="face" src="img/faces.jpg">
 </body>
 </html>
