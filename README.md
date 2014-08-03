@@ -18,7 +18,7 @@ All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 <!---
 [![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)](http://www.youtube.com/watch?v=Y0HPCuRrb_M)&nbsp;[![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)](http://www.youtube.com/watch?v=tAkngqp3qzQ) --->
 
-A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm) (currently Chrome, FF Nightly, Opera Next and Opera Mobile-only due to usage of WebRTC).
+A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm) (Internet Explorer and iOS not yet supported due to missing WebRTC implementations).
 
 ### Usage - jQuery ###
 
