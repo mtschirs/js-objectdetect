@@ -26,7 +26,6 @@
 				} catch (error) {
 					video.src = stream;
 				}
-				video.play();
 				compatibility.requestAnimationFrame(tick);
 			}, function (error) {
 				alert("WebRTC not available");
@@ -38,6 +37,8 @@
 		function tick() {
 			compatibility.requestAnimationFrame(tick);
 			
+			if (video.paused) video.play();
+          
 			if (video.readyState === video.HAVE_ENOUGH_DATA) {
 				$(video).objectdetect("all", {scaleMin: 3, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
 					if (coords[0]) {
