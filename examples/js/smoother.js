@@ -1,58 +1,51 @@
-Smoother = function(alpha, initPos) {
+/**
+ * Double-exponential smoothing based on Wright's modification of Holt's method
+ * for irregular data.
+ * 
+ * Copyright 2014 Martin Tschirsich
+ * Released under the MIT license
+ * 
+ * @param {Array}  alphas        Exponential smoothing factors
+ * @param {Array}  initialValues Initial values before smoothing
+ * @param {Number} lookAhead     Additionally added linear trend, between 0 - 1
+ */
+var smoother = function(alphas, initialValues, lookAhead) {
+	"use strict";
 	
-	var positions,
-		updateTime = +new Date();
-	
-	var sp = initPos,
-		sp2 = sp,
-		sl = sp.length;
-	
-	this.interpolate = true;
-	
-	this.smooth = function(pos) {
-		positions = pos;
-		
-		// update
-		for (var i = 0;i < sl;i++) {
-			sp[i] = alpha[i] * positions[i] + (1-alpha[i]) * sp[i];
-			sp2[i] = alpha[i] * sp[i] + (1-alpha[i]) * sp2[i];
-		}
+	var lastUpdate = +new Date(),
+		initialAlphas = alphas.slice(0),
+		alphas = alphas.slice(0),
+		a = initialValues.slice(0),
+		b = initialValues.slice(0),
+		numValues = initialValues.length;
+		lookAhead = typeof lookAhead !== 'undefined' ? lookAhead : 1.0;
 
-		// set time
-		updateTime = new Date();
+	this.smooth = function(values) {
+		var smoothedValues = [];
 		
-		var msDiff = new Date() - updateTime;
-		var newPositions = this.predict(msDiff);
+		// time in seconds since last update:
+		var time = new Date() - lastUpdate;
+		lastUpdate += time;
+		time /= 1000;
 		
-		return newPositions;
-	};
-	
-	this.predict = function(letime) {
-		var time = letime ? letime :  +new Date();
-		var retPos = [];
-		
-		if (this.interpolate) {
-			for (var i = 0; i < sl; i++) {
-				var step = time / 1000;
-				var stepLo = step >> 0;
-				var ratio = alpha[i] / (1-alpha[i]);
-				
-				var a = (step - stepLo)*ratio;
-				var b = (2 + stepLo*ratio);
-				var c = (1 + stepLo*ratio);
-				
-				retPos[i] = a * (sp[i] - sp2[i]) + b * sp[i] - c * sp2[i];
-			}
-		} else {
-			var step = time / 1000 >> 0;
-			var ratio = (alpha * step) / (1 - alpha);
-			var a = 2 + ratio;
-			var b = 1 + ratio;
-			for (var i = 0; i < sl; i++) {
-				retPos[i] = a * sp[i] - b * sp2[i];
-			}
+		// update:
+		for (var i = 0; i < numValues; ++i) {
+			
+			// Wright's modification of Holt's method for irregular data:
+			alphas[i] = alphas[i] / (alphas[i] + Math.pow(1 - initialAlphas[i], time));
+
+			var oldA = a[i];
+			a[i] = alphas[i] * values[i] + (1 - alphas[i]) * (a[i] + b[i] * time);
+			b[i] = alphas[i] * (a[i] - oldA) / time + (1 - alphas[i]) * b[i];
+			
+			smoothedValues[i] = a[i] + time * lookAhead * b[i];
+			
+			// Alternative approach:
+			//a[i] = alphas[i] * values[i] + (1 - alphas[i]) * a[i];
+			//b[i] = alphas[i] * a[i] + (1 - alphas[i]) * b[i];
+			//smoothedValues[i] = 2*a[i] - 1*b[i];*/
 		}
-	
-		return retPos;
+		
+		return smoothedValues;
 	};
 };
