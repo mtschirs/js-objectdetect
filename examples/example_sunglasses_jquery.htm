@@ -7,11 +7,11 @@
 	<script src="js/compatibility.js"></script>
 	<script src="js/smoother.js"></script>
 	
-	<script src="js/objectdetect.js"></script>
-	<script src="js/objectdetect.frontalface.js"></script>
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/objectdetect.frontalface.js"></script>
 	
-	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-	<script src="js/jquery.objectdetect.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
 	
 	<script>
 	var smoother = new Smoother(0.85, [0, 0, 0, 0, 0]);
@@ -47,10 +47,16 @@
 							"top":     ~~(coords[1] + coords[3] * 0.8/8 + $(video).offset().top) + "px",
 							"width":   ~~(coords[2] * 6/8) + "px",
 							"height":  ~~(coords[3] * 6/8) + "px",
-							"display": "block"
+							"display": "block",
+							"opacity": 1.0,
 						});
 					} else {
-						$("#glasses").css("display", "none");
+						var opacity = $("#glasses").css("opacity") - 0.2;
+						if (opacity > 0) {
+							$("#glasses").css("opacity", opacity);
+						} else {
+							$("#glasses").css("display", "none");
+						}
 					}
 				});
 			}
