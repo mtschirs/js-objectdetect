@@ -9,7 +9,8 @@
  * @param {Array}  initialValues Initial values before smoothing
  * @param {Number} lookAhead     Additionally added linear trend, between 0 - 1
  */
-var smoother = function(alphas, initialValues, lookAhead) {
+
+var Smoother = function(alphas, initialValues, lookAhead) {
 	"use strict";
 	
 	var lastUpdate = +new Date(),
@@ -17,9 +18,9 @@ var smoother = function(alphas, initialValues, lookAhead) {
 		alphas = alphas.slice(0),
 		a = initialValues.slice(0),
 		b = initialValues.slice(0),
-		numValues = initialValues.length;
-		lookAhead = typeof lookAhead !== 'undefined' ? lookAhead : 1.0;
-
+		numValues = initialValues.length,
+		lookAhead = (lookAhead !== 'undefined') ? lookAhead : 1.0;
+	
 	this.smooth = function(values) {
 		var smoothedValues = [];
 		

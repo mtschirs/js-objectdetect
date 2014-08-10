@@ -4,21 +4,28 @@
 
 This library is based on the work of Paul Viola and Rainer Lienhart and compatible to stump based cascade classifiers used by the OpenCV object detector.
 
+Watch [this video](http://www.youtube.com/watch?v=v0tbzTkJYZw) for a short demonstration.
+
 All modern browsers including IE 9+, Safari and Opera Mobile are supported.
-
-### Classifiers ###
-*js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
-
-<!--- ![face](http://mtschirs.github.com/js-objectdetect/media/twofaces.png)&nbsp;![upper body](http://mtschirs.github.com/js-objectdetect/media/upperbody.png)&nbsp;![fist](http://mtschirs.github.com/js-objectdetect/media/handfist.png)&nbsp;![hand](http://mtschirs.github.com/js-objectdetect/media/handopen.png)&nbsp;![eye](http://mtschirs.github.com/js-objectdetect/media/twoeyes.png) --->
 
 ### Examples ###
 
 *js-objectdetect* can be used for object detection, tracking and, in combination with mordern HTML5 features such as [WebRTC](http://caniuse.com/stream), for all sorts of augmented reality applications that run in the browser without any plugin.
 
-<!---
-[![glasses](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/glasses.gif)](http://www.youtube.com/watch?v=Y0HPCuRrb_M)&nbsp;[![gesture](https://raw.github.com/mtschirs/js-objectdetect/gh-pages/media/gesture.gif)](http://www.youtube.com/watch?v=tAkngqp3qzQ) --->
+The following demos are available (Internet Explorer and iOS not supported):
 
-A live demo of the glasses example can be found [here](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses_jquery.htm) (Internet Explorer and iOS not yet supported due to missing WebRTC implementations).
+[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif)<br>
+Rotating a 3D object via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
+
+[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif)<br>
+Scrolling a website via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
+
+[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif)<br>
+Trying out various sunglasses](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
+
+### Classifiers ###
+
+*js-objectdetect* is compatible to stump based classifiers used by [OpenCV](http://opencv.org/). Classifiers for face, hand and eye detection are already included. More can be found on the web ([classifier repository](http://alereimondo.no-ip.org/OpenCV/34)). However, not all classifiers have the same performance and some are quite sensitive to lighting conditions.
 
 ### Usage - jQuery ###
 
@@ -53,7 +60,7 @@ More examples can be found in [the repository](https://github.com/mtschirs/js-ob
 
 ### License ###
 
-*js-objectdetect* is distributed under [GPL3](https://raw.github.com/mtschirs/js-objectdetect/master/LICENSE.txt). The included classifiers are subject to [their own licenses](https://raw.github.com/mtschirs/js-objectdetect/master/CLASSIFIER-LICENSES.txt).
+*js-objectdetect* is distributed under [MIT license](https://raw.github.com/mtschirs/js-objectdetect/master/LICENSE.txt). The included classifiers are subject to [their own licenses](https://raw.github.com/mtschirs/js-objectdetect/master/CLASSIFIER-LICENSES.txt).
 
 ### Credits ###
 

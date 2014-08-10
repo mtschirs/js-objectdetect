@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Pick Your Glasses</title>
+	
+	<script src="js/compatibility.js"></script>
+	<script src="js/smoother.js"></script>
+	
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/objectdetect.frontalface.js"></script>
+	
+	<script src="js/jquery.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
+	
+	<script>
+	$(window).load(function() {
+	
+		var smoother = new Smoother([0.9999, 0.9999, 0.9, 0.9], [0, 0, 0, 0, 0]),
+				video = document.getElementById('video'),
+				glasses = document.getElementById('glasses');
+				
+		try {
+			compatibility.getUserMedia({video: true}, function(stream) {
+				try {
+					video.src = compatibility.URL.createObjectURL(stream);
+				} catch (error) {
+					video.src = stream;
+				}
+				compatibility.requestAnimationFrame(play);
+			}, function (error) {
+				alert('WebRTC not available');
+			});
+		} catch (error) {
+			alert(error);
+		}
+		
+		function play() {
+			compatibility.requestAnimationFrame(play);
+			if (video.paused) video.play();
+          
+			if (video.readyState === video.HAVE_ENOUGH_DATA) {
+				$(video).objectdetect('all', {size: 400, scaleMin: 9, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
+					if (coords.length > 0) {
+						
+						/* Find coordinates with maximum confidence: */
+						var coord = coords[0];
+						for (var i = coords.length - 1; i >= 0; --i)
+							if (coords[i][4] > coord[4]) coord = coords[i];
+						
+						coord = smoother.smooth(coord);
+						
+						/* Display glasses overlay: */
+						glasses.style.left    = ~~(coord[0] + coord[2] * 1.0/8 + $(video).offset().left) + 'px';
+						glasses.style.top     = ~~(coord[1] + coord[3] * 0.8/8 + $(video).offset().top) + 'px';
+						glasses.style.width   = ~~(coord[2] * 6/8) + 'px';
+						glasses.style.height  = ~~(coord[3] * 6/8) + 'px';
+						glasses.style.opacity = '1';
+						
+					} else {
+						var opacity = glasses.style.opacity - 0.2;
+						glasses.style.opacity = opacity > 0 ? opacity : 0;
+					}
+				});
+			}
+		}
+		
+		$("#list img").click(function () {
+			$("#glasses").attr("src", $(this).attr("src"));
+		});
+	});
+	
+    </script>
+</head>
+
+<body>
+	<h1>Pick Your Glasses</h1>
+	<video id="video" style="float: left; margin-right: 1em;"></video>
+	<div id="list">
+		<img src="img/sunglasses_0.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_1.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_2.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_3.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_4.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_5.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_6.png" style="display: box; width: 117px;">
+		<img src="img/sunglasses_7.png" style="display: box; width: 117px;">
+	</div>
+	
+	<img id="glasses" src="img/sunglasses_0.png" style="position: absolute; display: box; opacity: 0">
+</body>
+</html>

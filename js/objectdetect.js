@@ -2,8 +2,21 @@
  * Real-time object detector based on the Viola Jones Framework.
  * Compatible to OpenCV Haar Cascade Classifiers (stump based only).
  * 
- * Copyright 2014 Martin Tschirsich
- * Released under the MIT license
+ * Copyright (c) 2012, Martin Tschirsich
+
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 var objectdetect = (function() {
 	"use strict";
@@ -442,12 +455,14 @@ var objectdetect = (function() {
 		 * @param {Object} cascadeClassifier Haar cascade classifier
 		 * @return {Array} Rectangles representing detected object
 		 */
-		detectFinestScale = function(sat, rsat, ssat, cannySat, width, height, cascadeClassifier) {
+		detectFinestScale = function(sat, rsat, ssat, cannySat, width, height, cascadeClassifier, scaleFactor, scaleMin) {
 			var initialWidth = cascadeClassifier.size[0];
 			var initialHeight = cascadeClassifier.size[1];
 
-			var scale = 1;
-			var scaleFactor = 1.2;
+			if (!scaleMin) scaleMin = 1;
+			if (!scaleFactor) scaleFactor = 1.2;
+			
+			var scale = scaleMin;
 			var rects = [];
 			while (scale * initialWidth < width && scale * initialHeight < height) {
 				rects = detectSingleScale(sat, rsat, ssat, cannySat, width, height, scale, cascadeClassifier);
