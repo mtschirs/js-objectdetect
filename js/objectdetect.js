@@ -455,12 +455,14 @@ var objectdetect = (function() {
 		 * @param {Object} cascadeClassifier Haar cascade classifier
 		 * @return {Array} Rectangles representing detected object
 		 */
-		detectFinestScale = function(sat, rsat, ssat, cannySat, width, height, cascadeClassifier) {
+		detectFinestScale = function(sat, rsat, ssat, cannySat, width, height, cascadeClassifier, scaleFactor, scaleMin) {
 			var initialWidth = cascadeClassifier.size[0];
 			var initialHeight = cascadeClassifier.size[1];
 
-			var scale = 1;
-			var scaleFactor = 1.2;
+			if (!scaleMin) scaleMin = 1;
+			if (!scaleFactor) scaleFactor = 1.2;
+			
+			var scale = scaleMin;
 			var rects = [];
 			while (scale * initialWidth < width && scale * initialHeight < height) {
 				rects = detectSingleScale(sat, rsat, ssat, cannySat, width, height, scale, cascadeClassifier);
