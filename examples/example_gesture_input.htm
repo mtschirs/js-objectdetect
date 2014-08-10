@@ -3,6 +3,55 @@
 <head>
 	<meta charset="utf-8">
 	<title>Gesture Control Example</title>
+<<<<<<< HEAD
+		
+	<link rel='stylesheet' type='text/css' href='css/x3dom.css'></link>
+	<script src='js/x3dom.js'></script>
+    
+	<script src="js/compatibility.js"></script>
+	<script src="js/smoother.js"></script>
+	
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/objectdetect.handfist.js"></script>
+	
+	<script src="js/jquery.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
+	
+	<script>
+	$(window).load(function() {
+	
+		var smoother = new Smoother([0.9995, 0.9995], [0, 0], 0),
+			canvas = $('<canvas style="position: fixed; z-index: 1001; top: 10px; right: 10px; opacity: 0.9">').get(0),
+			context = canvas.getContext('2d'),
+			video = document.createElement('video');
+	
+		document.getElementsByTagName('body')[0].appendChild(canvas);
+	
+		try {
+			compatibility.getUserMedia({video: true}, function(stream) {
+				try {
+					video.src = compatibility.URL.createObjectURL(stream);
+				} catch (error) {
+					video.src = stream;
+				}
+				compatibility.requestAnimationFrame(play);
+			}, function (error) {
+				alert("WebRTC not available");
+			});
+		} catch (error) {
+			alert(error);
+		}
+	
+		var fist_pos_old, angle = [0, 0];
+		
+		function play() {
+			compatibility.requestAnimationFrame(play);
+			if (video.paused) video.play();
+	        
+	        /* Draw video overlay */
+			canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
+			canvas.height = 100;
+=======
 	
   <link rel='stylesheet' type='text/css' href='css/x3dom.css'></link>
   <script src='js/x3dom.js'></script>
@@ -50,6 +99,7 @@
 	        /* Draw video overlay */
 			canvas.width = ~~(250 * video.videoWidth / video.videoHeight);
 			canvas.height = 250;
+>>>>>>> branch 'gh-pages' of https://github.com/mtschirs/js-objectdetect.git
 			context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
 			
 			if (video.readyState === video.HAVE_ENOUGH_DATA) {

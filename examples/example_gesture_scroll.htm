@@ -292,8 +292,13 @@ var autoplay = function() {
 				if (video.readyState === video.HAVE_ENOUGH_DATA) {
 					
 					/* Draw video overlay */
+<<<<<<< HEAD
+					canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
+					canvas.height = 100;
+=======
 					canvas.width = ~~(300 * video.videoWidth / video.videoHeight);
 					canvas.height = 300;
+>>>>>>> branch 'gh-pages' of https://github.com/mtschirs/js-objectdetect.git
 					context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
 					
 					$(video).objectdetect("all", {size: 300, scaleMin: 3, scaleFactor: 1.1, classifier: objectdetect.handfist}, function(coords) {
