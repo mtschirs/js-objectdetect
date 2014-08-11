@@ -20,7 +20,7 @@ var Smoother = function(alphas, initialValues, lookAhead) {
 		b = initialValues.slice(0),
 		numValues = initialValues.length,
 		lookAhead = (lookAhead !== 'undefined') ? lookAhead : 1.0;
-	
+
 	this.smooth = function(values) {
 		var smoothedValues = [];
 		
