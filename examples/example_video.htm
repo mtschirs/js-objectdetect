@@ -40,7 +40,7 @@
 			compatibility.requestAnimationFrame(play);
 			if (video.paused) video.play();
           
-          /* Draw video overlay */
+          		/* Draw video overlay */
 			canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
 			canvas.height = 100;
 			context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
@@ -65,14 +65,11 @@
 							}
 							flag = false;
 						}
-						//What video to play :D
 					} else {
 						if(!pvid.paused){
 							pvid.pause();
 							flag = true
 						}
-						//var opacity = glasses.style.opacity - 0.2;
-						//glasses.style.opacity = opacity > 0 ? opacity : 0;
 					}
 				});
 			}
