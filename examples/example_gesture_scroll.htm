@@ -291,8 +291,8 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 						
 						/* Prepare the detector once the video dimensions are known: */
 			          	if (!detector) {
-				      		var width = ~~(60 * video.videoWidth / video.videoHeight);
-							var height  =60;
+				      		var width = ~~(80 * video.videoWidth / video.videoHeight);
+							var height = 80;
 				      		detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
 				      	}
 			      	
@@ -303,6 +303,7 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 						
 						var coords = detector.detect(video, 1);
 						if (coords[0]) {
+							var coord = coords[0];
 							
 							/* Rescale coordinates from detector to video coordinate space: */
 							coord[0] *= video.videoWidth / detector.canvas.width;
