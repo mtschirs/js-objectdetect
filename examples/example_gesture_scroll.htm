@@ -223,81 +223,92 @@ Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et
 	<script>
-var autoplay = function() {
-	function getScripts(urls, callback) {
-		var numDone = 0;
-		
-		function getScript(url, callback) {
-			var script = document.createElement('script'),
-					head = document.getElementsByTagName('head')[0],
-					done = false;
+	var autoplay = function() {
+		function getScripts(urls, callback) {
+			var numDone = 0;
 			
-				script.src = url;
-				script.onload = script.onreadystatechange = function() {
-					if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
-						done = true;
-						callback();
-						script.onload = script.onreadystatechange = null;
-						head.removeChild(script);
-					}
-				};
-			
-			head.appendChild(script);
-		}
-		
-		function getScriptCallback() {
-			if (urls.length > 0) getScript(urls.shift(), getScriptCallback);
-			else callback();
-		}
-
-		getScript(urls.shift(), getScriptCallback);
-  }
-  
-  getScripts([
-		'//mtschirs.github.io/js-objectdetect/examples/js/compatibility.js',
-    
-		'//mtschirs.github.io/js-objectdetect/js/objectdetect.js',
-		'//mtschirs.github.io/js-objectdetect/js/objectdetect.handfist.js',
-
-		'//mtschirs.github.io/js-objectdetect/examples/js/jquery.js',
-		'//mtschirs.github.io/js-objectdetect/js/jquery.objectdetect.js'],
-
-		function () {
-			var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px; opacity: 0.9">').get(0),
-					context = canvas.getContext('2d'),
-					video = document.createElement('video'),
-					fist_pos_old;
-			
-			document.getElementsByTagName('body')[0].appendChild(canvas);
-			
-			try {
-				compatibility.getUserMedia({video: true}, function(stream) {
-					try {
-						video.src = compatibility.URL.createObjectURL(stream);
-					} catch (error) {
-						video.src = stream;
-					}
-					compatibility.requestAnimationFrame(play);
-				}, function (error) {
-					alert("WebRTC not available");
-				});
-			} catch (error) {
-				alert(error);
+			function getScript(url, callback) {
+				var script = document.createElement('script'),
+						head = document.getElementsByTagName('head')[0],
+						done = false;
+				
+					script.src = url;
+					script.onload = script.onreadystatechange = function() {
+						if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+							done = true;
+							callback();
+							script.onload = script.onreadystatechange = null;
+							head.removeChild(script);
+						}
+					};
+				
+				head.appendChild(script);
 			}
 			
-			function play() {
-				compatibility.requestAnimationFrame(play);
-				if (video.paused) video.play();
+			function getScriptCallback() {
+				if (urls.length > 0) getScript(urls.shift(), getScriptCallback);
+				else callback();
+			}
+			
+			getScript(urls.shift(), getScriptCallback);
+		}
+		
+		getScripts([
+			'//mtschirs.github.io/js-objectdetect/examples/js/compatibility.js',
+			'//mtschirs.github.io/js-objectdetect/js/objectdetect.js',
+			'//mtschirs.github.io/js-objectdetect/js/objectdetect.handfist.js',
+			'//mtschirs.github.io/js-objectdetect/examples/js/jquery.js'],
+		
+			function() {
+				var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px; opacity: 0.9">').get(0),
+					context = canvas.getContext('2d'),
+					video = document.createElement('video'),
+					fist_pos_old,
+					detector;
 				
-				if (video.readyState === video.HAVE_ENOUGH_DATA) {
+				document.getElementsByTagName('body')[0].appendChild(canvas);
+				
+				try {
+					compatibility.getUserMedia({video: true}, function(stream) {
+						try {
+							video.src = compatibility.URL.createObjectURL(stream);
+						} catch (error) {
+							video.src = stream;
+						}
+						compatibility.requestAnimationFrame(play);
+					}, function (error) {
+						alert("WebRTC not available");
+					});
+				} catch (error) {
+					alert(error);
+				}
+				
+				function play() {
+					compatibility.requestAnimationFrame(play);
+					if (video.paused) video.play();
 					
-					/* Draw video overlay */
-					canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
-					canvas.height = 100;
-					context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
-					
-					$(video).objectdetect("all", {size: 300, scaleMin: 3, scaleFactor: 1.1, classifier: objectdetect.handfist}, function(coords) {
-						if (coords.length > 0) {
+					if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+						
+						/* Prepare the detector once the video dimensions are known: */
+			          	if (!detector) {
+				      		var width = ~~(60 * video.videoWidth / video.videoHeight);
+							var height  =60;
+				      		detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
+				      	}
+			      	
+						/* Draw video overlay: */
+						canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
+						canvas.height = 100;
+						context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
+						
+						var coords = detector.detect(video, 1);
+						if (coords[0]) {
+							
+							/* Rescale coordinates from detector to video coordinate space: */
+							coord[0] *= video.videoWidth / detector.canvas.width;
+							coord[1] *= video.videoHeight / detector.canvas.height;
+							coord[2] *= video.videoWidth / detector.canvas.width;
+							coord[3] *= video.videoHeight / detector.canvas.height;
 						
 							/* Find coordinates with maximum confidence: */
 							var coord = coords[0];
@@ -324,13 +335,12 @@ var autoplay = function() {
 								coord[3] / video.videoHeight * canvas.clientHeight);
 							context.stroke();
 						} else fist_pos_old = null;
-					});
+					}
 				}
 			}
-		});
-};
-
-		document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
+		);
+	};
+	document.getElementById('link').href = 'javascript:(' + autoplay.toString() + ')()';
     </script>
 </body>
 </html>

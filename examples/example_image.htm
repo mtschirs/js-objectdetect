@@ -6,39 +6,80 @@
 
 	<script src="../js/objectdetect.js"></script>
 	<script src="../js/objectdetect.frontalface.js"></script>
+	<script src="../js/objectdetect.profileface.js"></script>
+	<script src="../js/objectdetect.mouth.js"></script>
 	<script src="../js/objectdetect.eye.js"></script>
 	
-	<script src="js/jquery.js"></script>
-	<script src="../js/jquery.objectdetect.js"></script>
-	
 	<script>
-	$.fn.highlight = function(rect, color) {
-		$("<div />", {
-			"css": {
-				"border":   "2px solid " + color,
-				"position":	"absolute",
-				"left":		($(this).offset().left + rect[0]) + "px",
-				"top":		($(this).offset().top  + rect[1]) + "px",
-				"width": 	rect[2] + "px",
-				"height": 	rect[3] + "px"
-			}
-		}).appendTo("body");
-	}
+	window.onload = function() {
+		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext('2d');
+		var size = 250;
+		var detector;
+		var classifier = objectdetect.frontalface;
 		
-	$(window).load(function() {
-		$("#face").objectdetect("all", {classifier: objectdetect.frontalface}, function(faces) {
-			for (var i = 0; i < faces.length; ++i) {
-				$(this).highlight(faces[i], "red");
+		function detectFaces(canvas) {
+			// Detect faces in the image:
+			var rects = detector.detect(canvas);
 			
+			// Draw rectangles around detected faces:
+			for (var i = 0; i < rects.length; ++i) {
+				var coord = rects[i];
+				context.beginPath();
+				context.lineWidth = '' + coord[4] * .5;
+				context.strokeStyle = 'rgba(0, 255, 255, 0.75)';
+				context.rect(coord[0], coord[1], coord[2], coord[3]);
+				context.stroke();
 			}
-		});
-	});
+		}
+		
+		function loadImage(src) {
+			image = new Image();
+			image.onload = function() {
+				canvas.width = ~~(size * image.width / image.height);
+				canvas.height = ~~(size);
+				canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+				detector = new objectdetect.detector(canvas.width, canvas.height, 1.2, classifier);
+				detectFaces(canvas);
+			}
+			
+			image.src = src;
+		}
+		
+		function handleFileSelect(e) {
+	    	var file = e.target.files[0];
+			var reader = new FileReader();
+			
+			reader.onload = function(e) {
+				loadImage(e.target.result);
+			};
+			reader.readAsDataURL(file);
+		}
+		
+		function handleClassifierSelect(e) {
+			classifier = objectdetect[e.target.value];
+			detector = new objectdetect.detector(canvas.width, canvas.height, 1.2, classifier);
+			canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+			detectFaces(canvas);
+		}
+		document.getElementById('file').addEventListener('change', handleFileSelect, false);
+		document.getElementById('select').addEventListener('change', handleClassifierSelect, false);
 	
+		loadImage('img/faces.jpg');
+	}
     </script>
 </head>
 
 <body>
 	<h1>Detect Faces</h1>
-	<img id="face" src="img/faces.jpg">
+	<p><canvas id="canvas"></canvas></p>
+	<input type="file" id="file" name="file">
+	<select id="select">
+		<option selected value="frontalface">Frontal Face</option>
+		<option value="profileface">Profile Face</option>
+		<option value="mouth">Mouth</option>
+		<option value="eye">Eye</option>
+	</select>
+</script>
 </body>
 </html>
