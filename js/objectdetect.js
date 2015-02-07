@@ -695,16 +695,20 @@ var objectdetect = (function() {
 		 * @param image          HTML image, video or canvas element
 		 * @param [group]        Detection results will be grouped by proximity
 		 * @param [stepSize]     Increase for performance
+		 * @param [Roi]          Region of interest, i.e. search window
 		 * 
 		 * @return Grouped rectangles
 		 */
-		detector.prototype.detect = function(image, group, stepSize) {
+		detector.prototype.detect = function(image, group, stepSize, Roi) {
 			if (!stepSize) stepSize = 1;
 			
 			var width = this.canvas.width;
 			var height = this.canvas.height;
 			
-			this.context.drawImage(image, 0, 0, width, height);
+			if (Roi) 
+				this.context.drawImage(image, Roi[0], Roi[1], Roi[2], Roi[3], 0, 0, width, height);
+			else
+				this.context.drawImage(image, 0, 0, width, height);
 			var imageData = this.context.getImageData(0, 0, width, height).data;
 			this.gray = objectdetect.convertRgbaToGrayscale(imageData, this.gray);
 			
