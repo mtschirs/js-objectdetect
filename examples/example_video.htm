@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Video Play/Pause</title>
+	
+	<script src="js/compatibility.js"></script>
+	
+	<script src="../js/objectdetect.js"></script>
+	<script src="../js/objectdetect.frontalface.js"></script>
+	
+	<script src="js/jquery.js"></script>
+	<script src="../js/jquery.objectdetect.js"></script>
+	
+	<script>
+	$(window).load(function() {
+		var canvas = $('<canvas style="position: fixed; z-index: 1001;top: 10px; right: 10px; opacity: 0.9">').get(0),
+			context = canvas.getContext('2d'),
+			video = document.createElement('video'),
+			pvid = document.getElementById('main-video-container'),
+			flag = false;
+			document.getElementsByTagName('body')[0].appendChild(canvas);
+				
+		try {
+			compatibility.getUserMedia({video: true}, function(stream) {
+				try {
+					video.src = compatibility.URL.createObjectURL(stream);
+				} catch (error) {
+					video.src = stream;
+				}
+				compatibility.requestAnimationFrame(play);
+			}, function (error) {
+				alert('WebRTC not available');
+			});
+		} catch (error) {
+			alert(error);
+		}
+		
+		function play() {
+			compatibility.requestAnimationFrame(play);
+			if (video.paused) video.play();
+          
+          		/* Draw video overlay */
+			canvas.width = ~~(100 * video.videoWidth / video.videoHeight);
+			canvas.height = 100;
+			context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight);
+
+			if (video.readyState === video.HAVE_ENOUGH_DATA) {
+				$(video).objectdetect('all', {size: 400, scaleMin: 9, scaleFactor: 1.1, classifier: objectdetect.frontalface}, function(coords) {
+					if (coords.length > 0) {
+						
+						/* Draw coordinates on video overlay: */
+						context.beginPath();
+						context.lineWidth = '2';
+						context.fillStyle = 'rgba(0, 255, 255, 0.5)';
+						context.fillRect(
+							coords[0][0] / video.videoWidth * canvas.clientWidth,
+							coords[0][1] / video.videoHeight * canvas.clientHeight,
+							coords[0][2] / video.videoWidth * canvas.clientWidth,
+							coords[0][3] / video.videoHeight * canvas.clientHeight);
+						context.stroke();
+						if(flag){
+							if(pvid.paused){
+								pvid.play()
+							}
+							flag = false;
+						}
+					} else {
+						if(!pvid.paused){
+							pvid.pause();
+							flag = true
+						}
+					}
+				});
+			}
+		}
+		
+		
+	});
+	
+    </script>
+    <style>
+     	body{
+     		margin:0;
+     		padding:0;
+     		background: #bada55;
+     		opacity: 0.9;
+
+     	}
+
+    </style>
+</head>
+
+<body>
+	<center><h1>Watch something else, and it stops playing</h1></center>
+	<center>
+		<video id="main-video-container" src="video/oceans.webm" controls>
+  		Your browser does not support the <code>video</code> element.
+		</video>
+	</center>
+</body>
+</html>
