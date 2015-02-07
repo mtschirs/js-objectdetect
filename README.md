@@ -30,7 +30,7 @@ Cascades have to be converted into the js-objectdetect format before usage. The 
 
 ### Performance ###
 
-The following list provides a runtime and detection performance comparison among current JavaScript face detection libraries. All test results have been acquired by applying either a 24x24 stump-based HAAR cascade or, in case of CCV, a 24x24 SURF cascade classifier with minimum step size on a single scale 80x80 image. Measured times are averaged over 100 executions.
+The following list provides a runtime and detection performance comparison among current JavaScript face detection libraries. All test results have been acquired by applying either a 24x24 stump-based HAAR cascade or, in case of CCV, a 24x24 SURF cascade classifier with minimum step size on a single scale 80x80 image. Measured times are summed over 100 executions.
 
 *Last updated on February 7, 2015*
 
