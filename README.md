@@ -14,14 +14,11 @@ All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 
 The following demos are available (Internet Explorer and iOS not supported):
 
-[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif)<br>
-Rotating a 3D object via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
+[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif) Rotating a 3D object via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
 
-[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif)<br>
-Scrolling a website via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
+[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif) Scrolling a website via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
 
-[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif)<br>
-Trying out various sunglasses](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
+[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif) Trying out various sunglasses](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
 
 ### Classifiers ###
 
@@ -45,7 +42,7 @@ The following list provides a runtime and detection performance comparison among
 --- | --- | --- | ---
 ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsobjectdetect.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_trackingjs.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsfeat.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_ccv.png)
 
-<sup>1</sup> also [auduno/clmtrackr](https://github.com/auduno/clmtrackr). Based on an older version of [js-objectdetect](https://github.com/mtschirs/js-objectdetect). 
+<sup>1</sup> also [auduno/clmtrackr](https://github.com/auduno/clmtrackr), [camgaze.js](https://github.com/wallarelvo/camgaze.js). Based on an older version of [js-objectdetect](https://github.com/mtschirs/js-objectdetect). 
 
 <sup>2</sup> also [jquery.facedetection](https://github.com/jaysalvat/jquery.facedetection), [neave/face-detection](https://github.com/neave/face-detection), [wesbos/HTML5-Face-Detection](https://github.com/wesbos/HTML5-Face-Detection), [auduno/headtrackr](https://github.com/auduno/headtrackr)
 
