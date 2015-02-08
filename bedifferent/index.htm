@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang='de'>
+<head>
+	<meta charset='utf-8'>
+	<meta name='description' content='Du bist eine Orange. Oder ein Fisch. Webcam und Gesichtserkennung versetzen dich in Tiere, Menschen und Dinge.'>
+	<meta name='keywords' content='Webcam, Gesichtserkennung, Maske, Avatar, WebRTC, js-objectdetect'>
+	<meta name='viewport' content='width=device-width; user-scalable=yes;' />
+	<title>Sei wer anders.</title>
+	
+	<script src='js/compatibility.js'></script>
+	<script src='js/smoother.js'></script>
+	
+	<script src='js/objectdetect.js'></script>
+	<script src='js/objectdetect.frontalface.js'></script>
+	<script src='js/objectdetect.mouth.js'></script>
+	<script src='js/objectdetect.eye.js'></script>
+	
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Nosifer">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Eater">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Chicle">
+	
+	<script>
+	var video, canvas, context, outContext,
+			frame, framSkip, lastFrameTime = new Date,
+			mouthDetector, eyeDetector, faceDetector,
+			faceRect, mouthRect, leftEyeRect, rightEyeRect,
+			speechBubbleText, speechBubble,
+			mouthSmoother = new Smoother([0.9, 0.9, 0.9, 0.9], [0, 0, 0, 0]),
+			leftEyeSmoother = new Smoother([0.9, 0.9, 0.9, 0.9], [0, 0, 0, 0]),
+			rightEyeSmoother = new Smoother([0.9, 0.9, 0.9, 0.9], [0, 0, 0, 0]),
+			faceSmoother = new Smoother([0.9999, 0.9999, 0.999, 0.999], [0, 0, 0, 0]);
+	
+	var orange = {
+		mouthOut: [125, 430-87, 350, 220],
+		rightEyeOut: [270, 295-87, 150, 150],
+		leftEyeOut: [135, 295-87, 150, 150],
+		board: loadImage('img/orange-board.png'),
+		boardRect: [10, 10, 504, 130],
+		font: 'Sans-Serif',
+		front: loadImage('img/orange.png'),
+		back: loadImage('img/orange-back.png'),
+		composite: 'hard-light',
+		license: 'Photo by <a href="http://commons.wikimedia.org/wiki/User:Benjamint444">Benjamint444</a> / <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>'
+	}
+	
+	var strawberry = {
+		mouthOut: [210, 335, 150, 100],
+		leftEyeOut: [358, 187, 100, 100],
+		rightEyeOut: [75, 188, 120, 120],
+		board: loadImage('img/orange-board.png'),
+		boardRect: [10, 10, 504, 130],
+		font: 'Sans-Serif',
+		front: loadImage('img/strawberry.png'),
+		back: loadImage('img/strawberry-back.png'),
+		composite: 'hard-light',
+		license: 'Photo by Paolo Neo / Public Domain'
+	}
+	
+	var axolotl = {
+		mouthOut: [150, 180, 270, 140],
+		rightEyeOut: [135, 105, 80, 80],
+		leftEyeOut: [325, 110, 80, 80],
+		board: loadImage('img/frankenstein-board.png'),
+		boardRect: [70, 430, 380, 150],
+		font: 'Chicle',
+		front: loadImage('img/axolotl.png'),
+		back: loadImage('img/axolotl-back.png'),
+		composite: 'hard-light',
+		license: ''
+	}
+	
+	var fish = {
+		mouthOut: [200, 345, 150, 100],
+		rightEyeOut: [40, 155, 120, 120],
+		leftEyeOut: [335, 135, 120, 120],
+		board: loadImage('img/fish-board.png'),
+		boardRect: [10, 10, 504, 130],
+		font: 'Sans-Serif',
+		front: loadImage('img/fish.png'),
+		back: loadImage('img/fish-back.png'),
+		composite: 'multiply',
+		license: 'Photo by <a href="https://sites.google.com/site/thebrockeninglory/">Broken Inaglory</a> / <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>'
+	}
+	
+	var zombie = {
+		mouthOut: [155, 330, 200, 150],
+		leftEyeOut: [120, 190, 100, 100],
+		rightEyeOut: [260, 190, 100, 100],
+		board: loadImage('img/zombie-board.png'),
+		boardRect: [80, 440, 380, 160],
+		font: 'Eater',
+		front: loadImage('img/zombie.png'),
+		back: loadImage('img/zombie-back.png'),
+		composite: 'overlay',
+		license: 'Photo by <a href="https://www.flickr.com/photos/16462767@N00/">Canon in 2D</a> / <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>',
+	}
+	
+	var frankenstein = {
+		mouthOut: [180, 320, 175, 130],
+		rightEyeOut: [130, 180, 100, 100],
+		leftEyeOut: [270, 180, 100, 100],
+		front: loadImage('img/frankenstein.png'),
+		back: null,
+		board: loadImage('img/frankenstein-board.png'),
+		boardRect: [80, 440, 380, 160],
+		font: 'Nosifer',
+		composite: 'normal',
+		grayscale: true,
+		license: 'Photo by Universal Studios / Public Domain',
+	}
+	
+	var masks = [orange, fish, zombie, frankenstein, strawberry, axolotl];
+	var mask;
+	
+	var ROI = {
+		mouth: [1.5/10, 5.5/10, 7/10, 7/10],
+		leftEye: [0/10, 1.5/10, 4/10, 4/10],
+		rightEye: [5/10, 1.5/10, 4/10, 4/10],
+	}
+	
+	window.addEventListener('DOMContentLoaded', function() {
+		video = document.createElement('video'),
+		outCanvas = document.getElementById('outCanvas'),
+		outContext = outCanvas.getContext('2d'),
+		frame = 0,
+		frameSkip = 4,
+		mouthDetector = new objectdetect.detector(~~(25*1.5), ~~((15 + 6)*1.5), 1.075, objectdetect.mouth),
+		eyeDetector = new objectdetect.detector(20*1.5, 20*1.5, 1.1, objectdetect.eye),
+		faceDetector;
+		
+		setMask(orange);
+		
+		outCanvas.width = 524;
+		outCanvas.height = 593;
+		
+		// Capture the camera stream:
+		try {
+			compatibility.getUserMedia({video: true}, function(stream) {
+				try {
+					video.src = compatibility.URL.createObjectURL(stream);
+				} catch (error) {
+					video.src = stream;
+				}
+				compatibility.requestAnimationFrame(detectionFrame);
+				compatibility.requestAnimationFrame(animationFrame);
+			}, function (error) {
+				document.getElementById('notice').className = 'notice-visible';
+			});
+		} catch (error) {
+			console.log(error);
+			document.getElementById('notice').className = 'notice-visible';
+		}
+		
+		document.getElementById('share').addEventListener('click', function() { shareOnImgur(outCanvas); }, false);
+		
+		document.getElementById('next').addEventListener('click', function() {
+			var index = masks.indexOf(mask);
+			setMask(masks[index < masks.length - 1 ? index + 1 : 0]);
+		}, false);
+		
+		document.getElementById('prev').addEventListener('click', function() {
+			var index = masks.indexOf(mask);
+			setMask(masks[index > 0 ? index - 1 : masks.length - 1]);
+		}, false);
+	});
+	
+	// Animation Frame:
+	function animationFrame() {
+		compatibility.requestAnimationFrame(animationFrame);
+		
+		// Draw the mask:
+		if (mask.back) {
+			outContext.globalCompositeOperation = "copy";
+			outContext.drawImage(mask.back, 0, 0, outCanvas.width, outCanvas.height);
+			outContext.globalCompositeOperation = "source-over";
+		}
+		outContext.globalCompositeOperation = mask.composite;
+		
+		if (mouthRect) // Draw mouth on video overlay:
+			if (mask.grayscale) drawImageGrayscale(outContext, video, mouthRect[0], mouthRect[1], mouthRect[2], mouthRect[3], mask.mouthOut[0] , mask.mouthOut[1], mask.mouthOut[2], mask.mouthOut[3]);
+			else outContext.drawImage(video, mouthRect[0], mouthRect[1], mouthRect[2], mouthRect[3], mask.mouthOut[0] , mask.mouthOut[1], mask.mouthOut[2], mask.mouthOut[3]);
+			
+		if (rightEyeRect) // Draw rightEye on video overlay:
+			if (mask.grayscale) drawImageGrayscale(outContext, video, rightEyeRect[0], rightEyeRect[1], rightEyeRect[2], rightEyeRect[3], mask.leftEyeOut[0], mask.leftEyeOut[1], mask.leftEyeOut[2], mask.leftEyeOut[3]);
+			else outContext.drawImage(video, rightEyeRect[0], rightEyeRect[1], rightEyeRect[2], rightEyeRect[3], mask.leftEyeOut[0], mask.leftEyeOut[1], mask.leftEyeOut[2], mask.leftEyeOut[3]);
+			
+		if (leftEyeRect) // Draw leftEye on video overlay:
+			if (mask.grayscale) drawImageGrayscale(outContext, video, leftEyeRect[0], leftEyeRect[1], leftEyeRect[2], leftEyeRect[3], mask.rightEyeOut[0], mask.rightEyeOut[1], mask.rightEyeOut[2], mask.rightEyeOut[3]);
+			else outContext.drawImage(video, leftEyeRect[0], leftEyeRect[1], leftEyeRect[2], leftEyeRect[3], mask.rightEyeOut[0], mask.rightEyeOut[1], mask.rightEyeOut[2], mask.rightEyeOut[3]);
+			
+		outContext.globalCompositeOperation = 'normal';
+		outContext.globalCompositeOperation = 'source-over';
+		outContext.drawImage(mask.front, 0, 0, outCanvas.width, outCanvas.height);
+		
+		var text = document.getElementById('text').value;
+		if (text) addSpeechBubble(text);
+	}
+	
+	// Detection frame:
+	function detectionFrame() {
+		compatibility.requestAnimationFrame(detectionFrame);
+		if (video.paused) video.play();
+		if (video.readyState !== video.HAVE_ENOUGH_DATA || !video.videoWidth) return;
+		
+		// Prepare the detector once the video dimensions are known:
+		var width = ~~(60 * video.videoWidth / video.videoHeight);
+		if (!faceDetector || faceDetector.canvas.width != width) {
+			faceDetector = new objectdetect.detector(width, 60, 1.1, objectdetect.frontalface);
+		}
+		
+		var prevFaceRect = faceRect;
+		
+		// Perform the actual detection:
+		if (!faceRect || frame % frameSkip === 0) {
+			faceRects = faceDetector.detect(video, 1);
+			if (faceRects[0]) {
+				
+				faceRect = faceRects[0];// faceSmoother.smooth(faceRects[0]);
+				
+				// Rescale faceRectinates from detector to video faceRectinate space:
+				faceRect[0] *= video.videoWidth / faceDetector.canvas.width;
+				faceRect[1] *= video.videoHeight / faceDetector.canvas.height;
+				faceRect[2] *= video.videoWidth / faceDetector.canvas.width;
+				faceRect[3] *= video.videoHeight / faceDetector.canvas.height;
+			}
+		}
+		
+		if (faceRect) {
+		
+			// Mouth:
+			if (!mouthRect || (frame + 1) % frameSkip === 0) {
+				var rectROI = [~~(faceRect[0] + faceRect[2] * ROI.mouth[0]), ~~(faceRect[1] + faceRect[3] * ROI.mouth[1]), ~~(faceRect[2] * ROI.mouth[2]), ~~(faceRect[2] * ROI.mouth[3] * mouthDetector.canvas.height / mouthDetector.canvas.width)];
+				var mouthRects = inRect(rectROI, 0, 0, video.videoWidth, video.videoHeight) && mouthDetector.detect(video, 1, 1, rectROI);
+				if (mouthRects[0]) {
+					mouthRect = mouthSmoother.smooth(mouthRects[0]);
+					
+					mouthRect[0] = rectROI[0] + mouthRect[0] * rectROI[2] / mouthDetector.canvas.width;
+					mouthRect[1] = rectROI[1] + mouthRect[1] * rectROI[3] / mouthDetector.canvas.height;
+					mouthRect[2] = mouthRect[2] * rectROI[2] / mouthDetector.canvas.width;
+					mouthRect[3] = mouthRect[3] * rectROI[3] / mouthDetector.canvas.height;
+				}
+			} else {
+				mouthRect[0] += faceRect[0] - prevFaceRect[0];
+				mouthRect[1] += faceRect[1] - prevFaceRect[1];
+				mouthRect[2] *= faceRect[2] / prevFaceRect[2];
+				mouthRect[3] *= faceRect[3] / prevFaceRect[3];
+			}
+			
+			// Eye Right:
+			if (!rightEyeRect || (frame + 2) % frameSkip === 0) {
+				var rectROI = [~~(faceRect[0] + faceRect[2] * ROI.rightEye[0]), ~~(faceRect[1] + faceRect[3] * ROI.rightEye[1]), ~~(faceRect[2] * ROI.rightEye[2]), ~~(faceRect[2] * ROI.rightEye[3] * eyeDetector.canvas.height / eyeDetector.canvas.width)];
+				var rightEyeRects = inRect(rectROI, 0, 0, video.videoWidth, video.videoHeight) && eyeDetector.detect(video, 1, 1, rectROI);
+				if (rightEyeRects[0]) {
+					rightEyeRect = rightEyeSmoother.smooth(rightEyeRects[0]);
+					
+					rightEyeRect[0] = rectROI[0] + rightEyeRect[0] * rectROI[2] / eyeDetector.canvas.width;
+					rightEyeRect[1] = rectROI[1] + rightEyeRect[1] * rectROI[3] / eyeDetector.canvas.height;
+					rightEyeRect[2] = rightEyeRect[2] * rectROI[2] / eyeDetector.canvas.width;
+					rightEyeRect[3] = rightEyeRect[3] * rectROI[3] / eyeDetector.canvas.height;
+				} 
+			} else {
+					rightEyeRect[0] += faceRect[0] - prevFaceRect[0];
+					rightEyeRect[1] += faceRect[1] - prevFaceRect[1];
+					rightEyeRect[2] *= faceRect[2] / prevFaceRect[2];
+					rightEyeRect[3] *= faceRect[3] / prevFaceRect[3];
+			}
+			
+			// Eye Left:
+			if (!leftEyeRect || (frame + 3) % frameSkip === 0) {
+				var rectROI = [~~(faceRect[0] + faceRect[2] * ROI.leftEye[0]), ~~(faceRect[1] + faceRect[3] * ROI.leftEye[1]), ~~(faceRect[2] * ROI.leftEye[2]), ~~(faceRect[2] * ROI.leftEye[3] * eyeDetector.canvas.height / eyeDetector.canvas.width)];
+				var leftEyeRects = inRect(rectROI, 0, 0, video.videoWidth, video.videoHeight) && eyeDetector.detect(video, 1, 1, rectROI);
+				if (leftEyeRects[0]) {
+					leftEyeRect = leftEyeSmoother.smooth(leftEyeRects[0]);
+					
+					leftEyeRect[0] = rectROI[0] + leftEyeRect[0] * rectROI[2] / eyeDetector.canvas.width;
+					leftEyeRect[1] = rectROI[1] + leftEyeRect[1] * rectROI[3] / eyeDetector.canvas.height;
+					leftEyeRect[2] = leftEyeRect[2] * rectROI[2] / eyeDetector.canvas.width;
+					leftEyeRect[3] = leftEyeRect[3] * rectROI[3] / eyeDetector.canvas.height;
+				}
+			} else {
+					leftEyeRect[0] += faceRect[0] - prevFaceRect[0];
+					leftEyeRect[1] += faceRect[1] - prevFaceRect[1];
+					leftEyeRect[2] *= faceRect[2] / prevFaceRect[2];
+					leftEyeRect[3] *= faceRect[3] / prevFaceRect[3];
+			}
+		}
+		 
+    var now = new Date;
+    var fps = 1000 / (now - lastFrameTime);
+    lastFrameTime = now;
+    if (fps < 10) frameSkip += frameSkip < 10 ? 1 : 0;
+    else if (fps > 20) frameSkip -= frameSkip > 1 ? 1 : 0;
+    
+		++frame;
+	}
+	
+	function loadImage(src) {
+		var img = new Image();
+		img.src = src;
+		return img;
+	}
+	
+	function inRect(rect, x, y, width, height) {
+		var rx = rect[0], ry = rect[1], rwidth = rect[2], rheight = rect[3];
+		return rx > 0 && rx < width && ry > 0 && ry < height && rx + rwidth < width &&	ry + rheight < height;
+	}
+	
+	function drawImageGrayscale(context, image, sx, sy, sw, sh, dx, dy, dw, dh) {
+		context.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+		var imageData = context.getImageData(dx, dy, dw, dh);
+		var data = imageData.data;
+		for (var i = 0; i < data.length; i += 4) {
+			data[i] = data[i + 1] = data[i + 2] = (data[i] * 4899 + data[i + 1] * 9617 + data[i + 2] * 1868 + 8192) >> 14;
+		}
+		context.putImageData(imageData, dx, dy);
+	}
+	
+	function fitTextToWidth(context, text, width) {
+		var tokens = text.split(' ');
+    var lines = [];
+    var line = '';
+    var maxLineWidth = 0;
+		for (var i = 0; i < tokens.length; ++i) {
+			var token = tokens[i];
+			var lineWidth = context.measureText(line + ' ' + token).width;
+			if (lineWidth < width) {
+				line += ' ' + token;
+			} else if (line !== '') {
+				lines.push(line);
+				line = token;
+			} else {
+				maxLineWidth = Math.max(lineWidth, maxLineWidth);
+				lines.push(token);
+				line = '';
+			}
+	  }
+	  if (line != '') lines.push(line);
+	  return {lines: lines, width: maxLineWidth};
+	}
+	
+	function fillText(context, text, x, y, width, height, fontFace){ 
+    var fontSize = 200,
+			  minFontSize = 12,
+			  scaleFactor = 0.2;
+		
+    context.font = fontSize + 'px ' + fontFace;
+    var lineHeight = context.measureText('W').width,
+				fittedText = fitTextToWidth(context, text, width);
+    while ((fittedText.lines.length * lineHeight > height || fittedText.width > width) && fontSize > minFontSize) {
+			fontSize -= ~~(fontSize * scaleFactor + 0.5);
+			context.font = fontSize + 'px ' + fontFace;
+			lineHeight = context.measureText('W').width;
+			fittedText = fitTextToWidth(context, text, width);
+    }
+    
+    y += (height - fittedText.lines.length * lineHeight) / 2;
+	  for (var i = 0; i < fittedText.lines.length; ++i) {
+			var line = fittedText.lines[i];
+			lineWidth = context.measureText(line).width;
+			context.fillText(line, x + (width - lineWidth) / 2, y);
+			y += lineHeight;
+		}
+	}
+	
+	function setMask(newMask) {
+		mask = newMask;
+		document.getElementById('license').innerHTML  = mask.license;
+	}
+	
+	function shareOnImgur(canvas) {
+		try {
+				var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+		} catch(e) {
+				var img = canvas.toDataURL().split(',')[1];
+		}
+		
+		var fd = new FormData();
+		fd.append('type', 'base64');
+		fd.append('image', img);
+
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', 'https://api.imgur.com/3/image');
+		xhr.setRequestHeader('Authorization', 'Client-ID b78040419f9a840');
+		
+		document.body.className += ' loading';
+		xhr.onload = function(e) {
+			if (this.readyState === 4) {  
+				if (this.status === 200) {
+					json = JSON.parse(this.response);
+					if (json.data.link) {
+						window.location = 'http://imgur.com/gallery/' + json.data.id;
+					}
+				} else document.body.className = document.body.className.split(' ').filter(function(e) { return e !== 'loading'; }).join(' ');
+			}
+		}
+		xhr.send(fd);
+	}
+	
+	function addSpeechBubble(text) {
+		outContext.drawImage(mask.board, 0, 0);
+		outContext.textBaseline = 'top';
+		fillText(outContext, text, mask.boardRect[0], mask.boardRect[1], mask.boardRect[2], mask.boardRect[3], mask.font);
+	}
+	</script>
+	
+	<style>
+	body {
+		background-image: url('img/bg_xhdpi.jpg');
+		background-size: cover;
+		font-family: Helvetica, Arial, Sans-Serif;
+		color: #222;
+		margin: 10px 0 0 10px;
+	}
+
+	.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, 0.9 ) 
+                url('img/loading.gif') 
+                50% 50% 
+                no-repeat;
+	}
+	
+	body.loading {
+    overflow: hidden;   
+	}
+
+	body.loading .modal {
+			display: block;
+	}
+	
+	div {
+		padding: 0;
+		margin: 0;
+	}
+	
+	button {
+		border: none;
+		background-repeat: no-repeat;
+		font-weight: bold;
+		font-size: 20px;
+		padding: 0;
+		margin: 0;
+	}
+	
+	input {
+		border: none;
+		background-repeat: no-repeat;
+		font-size: 20px;
+		padding: 0;
+		margin: 0;
+	}
+	
+	h1 {
+		margin: 3px 10px 10px 0;
+		text-shadow: 4px 4px 6px rgba(160, 160, 160, 0.7);
+	}
+	
+	#block-1 {
+		position: relative;
+		float: left;
+		margin: 0 10px 10px 0;
+		max-width: 524px;
+		max-height: 593px;
+	}
+	
+	#block-1 canvas {
+		max-width: 524px;
+		max-height: 593px;
+		width: 100%;
+		background-color: rgba(160, 160, 160, 0.7);
+		background-image: url('img/webcam.png');
+		background-repeat: no-repeat;
+		background-position: center;
+		z-index: -1;
+	}
+	
+	#block-1 .notice-hidden {
+		display: none;
+	}
+	
+	#block-1 .notice-visible {
+		vertical-align: middle;
+		text-align: center;
+		position: absolute;
+		font-size: 20px;
+		background-color: #224;
+		color: #EEE;
+		z-index: 100;
+		opacity: 0.9;
+		top: 5%; left: 5%; right: 5%; bottom: 5%;
+	}
+	
+	#block-1 .btn-prev {
+		position: absolute;
+		width: 100px;
+		height: 100%;
+		background-color: transparent;
+		background-image: url('img/left.png');
+		background-position: left center;
+		opacity: 0.5;
+		transition: background 0.25s linear;
+	}
+	
+	#block-1 .btn-prev::-moz-focus-inner {
+		border: 0;
+	}
+	
+	#block-1 .btn-prev:hover {
+		background-color: #AAA;
+	}
+	
+	#block-1 .btn-prev:focus {
+		background-color: transparent;
+		outline: none;
+	}
+	
+	#block-1 .btn-next {
+		position: absolute;
+		width: 100px;
+		height: 100%;
+		right: 0;
+		background-color: transparent;
+		background-image: url('img/right.png');
+		background-position: right center;
+		opacity: 0.5;
+		transition: background 0.25s linear;
+	}
+	
+	#block-1 .btn-next:hover {
+		background-color: #AAA;
+	}
+	
+	#block-1 .btn-next:focus {
+		background-color: transparent;
+		outline: none;
+	}
+	
+	#block-1 .btn-next::-moz-focus-inner {
+		border: 0;
+	}
+	
+	#block-1 .license {
+		position: absolute;
+		bottom: 0px;
+		height: 20px;
+		width: 100%;
+		text-align: center;
+		font-size: 10px;
+		opacity: 0.5;
+	}
+	
+	#block-2 {
+		margin: 0 10px 10px 0;
+		max-width: 1000px;
+	}
+	
+	#block-2 .text {
+		background-image: url('img/text.png');
+		background-position: 10px center;
+		background-size: 25px;
+		background-color: rgba(230,230,230,0.7);
+		max-width: 262px;
+		width: 50%;
+		height: 50px;
+		text-align: center;
+	}
+	
+	#block-2 .btn-share {
+		background-image: url('img/camera.png');
+		background-position: 10px center;
+		background-size: 25px;
+		background-color: rgba(160,160,160,0.7);
+		max-width: 262px;
+		width: 50%;
+		height: 50px;
+	}
+	
+	#block-2 .btn-share:hover {
+		background-color: rgba(127,127,127,0.8);
+	}
+	
+	a:link {
+    color: #000;
+	}
+
+	a:visited {
+    color: #888;
+	}
+
+	a:hover {
+    color: #AAA;
+	}
+
+	a:active {
+    color: #222;
+	}
+	</style>
+</head>
+
+<body>
+	<div class='modal'></div>
+	<h1>Sei wer anders.</h1>
+	
+	<div id='block-1'>
+		<div id='license' class='license'></div>
+		<button id='prev' class='btn-prev'></button>
+		<button id='next' class='btn-next'></button>
+		<div id='notice' class='notice-hidden'>
+			<h2>Info</h2>
+			<p>
+			Webcam und WebRTC kompatibler Browser benötigt.
+			</p>
+			Leider nicht unterstützt sind:
+			<ul><li><b>Internet Explorer</b></li><li><b>iOS / iPhone</b></li></ul>
+		</div>
+		<canvas id='outCanvas'></canvas>
+	</div>
+	
+	<div id='block-2'>
+		<input id='text' class='text' type='text'><button id='share' class='btn-share'>Foto teilen</button>
+		
+		<br><br>
+		<h3>Werde zu etwas Neuem</h3>
+		<p>
+		Ob Orange, Fisch oder Frankenstein, eine neue Persönlichkeit steht dir gut zu Gesicht.
+		</p>
+		
+		<h3>Hinweise</h3>
+		<p>
+		Dein Gesicht mus komplett von der Webcam erfasst werden. Wenn es nicht klappt, einfach den Abstand zur Webcam etwas variieren.
+		</p>
+		
+		<h3>About</h3>
+		<p>Basiert auf WebRTC und <a href="https://github.com/mtschirs/js-objectdetect">js-objectdetect</a>.</p>
+		<p>Erstellt von Martin Tschirsich.</p>
+	</div>
+</body>
+</html>
