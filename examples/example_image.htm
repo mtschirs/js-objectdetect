@@ -9,6 +9,7 @@
 	<script src="../js/objectdetect.profileface.js"></script>
 	<script src="../js/objectdetect.mouth.js"></script>
 	<script src="../js/objectdetect.eye.js"></script>
+	<script src="../js/objectdetect.nose.js"></script>
 	
 	<script>
 	window.onload = function() {
@@ -26,7 +27,7 @@
 			for (var i = 0; i < rects.length; ++i) {
 				var coord = rects[i];
 				context.beginPath();
-				context.lineWidth = '' + coord[4] * .5;
+				context.lineWidth = 1;
 				context.strokeStyle = 'rgba(0, 255, 255, 0.75)';
 				context.rect(coord[0], coord[1], coord[2], coord[3]);
 				context.stroke();
@@ -79,6 +80,7 @@
 		<option value="profileface">Profile Face</option>
 		<option value="mouth">Mouth</option>
 		<option value="eye">Eye</option>
+		<option value="nose">Nose</option>
 	</select>
 </script>
 </body>

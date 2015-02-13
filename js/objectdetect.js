@@ -3,20 +3,6 @@
  * Compatible to OpenCV Haar Cascade Classifiers (stump based only).
  * 
  * Copyright (c) 2012, Martin Tschirsich
-
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 var objectdetect = (function() {
 	"use strict";
@@ -34,8 +20,8 @@ var objectdetect = (function() {
 			var srcLength = src.length;
 			if (!dst) dst = new Uint32Array(srcLength >> 2);
 			
-			for (var i = 0; i < srcLength; i += 4) {
-				dst[i >> 2] = (src[i] * 4899 + src[i + 1] * 9617 + src[i + 2] * 1868 + 8192) >> 14;
+			for (var i = 0; i < srcLength; i += 2) {
+				dst[i >> 2] = (src[i] * 4899 + src[++i] * 9617 + src[++i] * 1868 + 8192) >> 14;
 			}
 			return dst;
 		},
@@ -70,7 +56,7 @@ var objectdetect = (function() {
 			
 			var dstIndex = 0;
 			for (var y = 0, yEnd = dstHeight * factor; y < yEnd; y += factor) {
-				for (var srcIndex = ~~(y) * dstWidth, srcEnd=srcIndex + dstWidth; srcIndex < srcEnd; ++srcIndex) {
+				for (var srcIndex = ~~y * dstWidth, srcEnd=srcIndex + dstWidth; srcIndex < srcEnd; ++srcIndex) {
 					dst[dstIndex] = dst[srcIndex];
 					++dstIndex;
 				}
@@ -89,7 +75,7 @@ var objectdetect = (function() {
 		 * @return {Array} 1-channel destination image
 		 */
 		mirrorImage = function(src, srcWidth, srcHeight, dst) {
-			if (!dst) dst = new src.constructor(src.length);
+			if (!dst) dst = new src.constructor(srcWidth * srcHeight);
 			
 			var index = 0;
 			for (var y = 0; y < srcHeight; ++y) {
@@ -116,7 +102,7 @@ var objectdetect = (function() {
 		 * @return {Array} 1-channel destination image
 		 */
 		computeCanny = function(src, srcWidth, srcHeight, dst) {
-			var srcLength = src.length;
+			var srcLength = srcWidth * srcHeight;
 			if (!dst) dst = new src.constructor(srcLength);
 			var buffer1 = dst === src ? new src.constructor(srcLength) : dst;
 			var buffer2 = new src.constructor(srcLength);
@@ -266,7 +252,7 @@ var objectdetect = (function() {
 			for (var i = srcHeightTimesDstWidth; i >= 0; i -= dstWidth)
 				dst[i] = 0;
 			
-			for (var i = dstWidth - 1; i >= 0; --i)
+			for (var i = 0; i < dstWidth; ++i)
 				dst[i] = 0;
 			
 			var index = 0;
@@ -406,38 +392,28 @@ var objectdetect = (function() {
 				for (var j = 0, jEnd = numComplexClassifiers; j < jEnd; ++j) {
 					
 					var tilted = dst[++dstIndex] = src[++srcIndex];
-					var numFeaturesTimes2 = dstUint32[++dstIndex] = src[++srcIndex] * 3;
+					var numFeaturesTimes3 = dstUint32[++dstIndex] = src[++srcIndex] * 3;
 					if (tilted) {
-						for (var kEnd = dstIndex + numFeaturesTimes2; dstIndex < kEnd; ) {						
-							var featureOffset = src[srcIndex + 1] + src[srcIndex + 2] * width,
-								featureWidthTimesWidth = src[srcIndex + 3] * (width + 1),
-								featureHeightTimesWidth = src[srcIndex + 4] * (width - 1);
-							
-							dstUint32[++dstIndex] = featureOffset;
-							dstUint32[++dstIndex] = featureWidthTimesWidth + (featureHeightTimesWidth << 16);
-							
-							dst[++dstIndex] = src[srcIndex + 5];
-							srcIndex += 5;
+						for (var kEnd = dstIndex + numFeaturesTimes3; dstIndex < kEnd; ) {
+							dstUint32[++dstIndex] = src[++srcIndex] + src[++srcIndex] * width;
+							dstUint32[++dstIndex] = src[++srcIndex] * (width + 1) + ((src[++srcIndex] * (width - 1)) << 16);
+							dst[++dstIndex] = src[++srcIndex];
 						}
 					} else {
-						for (var kEnd = dstIndex + numFeaturesTimes2; dstIndex < kEnd; ) {
-							var featureOffset = src[srcIndex + 1] + src[srcIndex + 2] * width,
-								featureWidth = src[srcIndex + 3],
-								featureHeightTimesWidth = src[srcIndex + 4] * width;
-
-							dstUint32[++dstIndex] = featureOffset;
-							dstUint32[++dstIndex] = featureWidth + (featureHeightTimesWidth << 16);
-							dst[++dstIndex] = src[srcIndex + 5];
-							srcIndex += 5;
+						for (var kEnd = dstIndex + numFeaturesTimes3; dstIndex < kEnd; ) {
+							dstUint32[++dstIndex] = src[++srcIndex] + src[++srcIndex] * width;
+							dstUint32[++dstIndex] = src[++srcIndex] + ((src[++srcIndex] * width) << 16);
+							dst[++dstIndex] = src[++srcIndex];
 						}
 					}
-					var classifierThreshold = src[++srcIndex];
-					for (var k = 0; k < numFeaturesTimes2;) {
-						dst[dstIndex - k] /= classifierThreshold;
+					
+					var inverseClassifierThreshold = 1 / src[++srcIndex];
+					for (var k = 0; k < numFeaturesTimes3; ) {
+						dst[dstIndex - k] *= inverseClassifierThreshold;
 						k += 3;
 					}
 
-					if ((classifierThreshold < 0)) {
+					if (inverseClassifierThreshold < 0) {
 						dst[dstIndex + 2] = src[++srcIndex];
 						dst[dstIndex + 1] = src[++srcIndex];
 						dstIndex += 2;
@@ -447,7 +423,7 @@ var objectdetect = (function() {
 					}
 				}
 			}
-			return dst.subarray(0, dstIndex+1);
+			return dst.subarray(0, dstIndex + 1);
 		},
 		
 		/**
@@ -566,21 +542,22 @@ var objectdetect = (function() {
 		 * is returned.
 		 * 
 		 * @param {Array}  rects        Rectangles (Arrays of 4 floats)
-		 * @param {Number} minNeighbors
-		 *  
+		 * @param {Number} minNeighbors Minimum neighbors for returned groups
+		 * @param {Number} confluence	Neighbor distance threshold factor
 		 * @return {Array} Mean rectangles (Arrays of 4 floats)
 		 */
 		groupRectangles = function(rects, minNeighbors, confluence) {
 			var rectsLength = rects.length;
-			if (!confluence) confluence = 1.0;
+			if (!confluence) confluence = 0.25;
 			
 	    	// Partition rects into similarity classes:
 	    	var numClasses = 0;
 	    	var labels = new Array(rectsLength);
-			for (var i = 0; i < labels.length; ++i) {
+			for (var i = 0; i < rectsLength; ++i) {
 				labels[i] = 0;
 			}
 			
+			var abs = Math.abs, min = Math.min;
 			for (var i = 0; i < rectsLength; ++i) {
 				var found = false;
 				for (var j = 0; j < i; ++j) {
@@ -588,11 +565,11 @@ var objectdetect = (function() {
 					// Determine similarity:
 					var rect1 = rects[i];
 					var rect2 = rects[j];
-			        var delta = confluence * (Math.min(rect1[2], rect2[2]) + Math.min(rect1[3], rect2[3]));
-			        if (Math.abs(rect1[0] - rect2[0]) <= delta &&
-			        	Math.abs(rect1[1] - rect2[1]) <= delta &&
-			        	Math.abs(rect1[0] + rect1[2] - rect2[0] - rect2[2]) <= delta &&
-			        	Math.abs(rect1[1] + rect1[3] - rect2[1] - rect2[3]) <= delta) {
+			        var delta = confluence * (min(rect1[2], rect2[2]) + min(rect1[3], rect2[3]));
+			        if (abs(rect1[0] - rect2[0]) <= delta &&
+			        	abs(rect1[1] - rect2[1]) <= delta &&
+			        	abs(rect1[0] + rect1[2] - rect2[0] - rect2[2]) <= delta &&
+			        	abs(rect1[1] + rect1[3] - rect2[1] - rect2[3]) <= delta) {
 						
 						labels[i] = labels[j];
 						found = true;
@@ -621,14 +598,15 @@ var objectdetect = (function() {
 				++group[4];
 			}
 			
-			for (var i = numClasses - 1; i >= 0; --i) {
+			for (var i = 0; i < numClasses; ++i) {
 				var numNeighbors = groups[i][4];
 				if (numNeighbors >= minNeighbors) {
 					var group = groups[i];
-					group[0] /= numNeighbors;
-					group[1] /= numNeighbors;
-					group[2] /= numNeighbors;
-					group[3] /= numNeighbors;
+					numNeighbors = 1 / numNeighbors;
+					group[0] *= numNeighbors;
+					group[1] *= numNeighbors;
+					group[2] *= numNeighbors;
+					group[3] *= numNeighbors;
 				} else groups.splice(i, 1);
 			}
 			
@@ -637,16 +615,21 @@ var objectdetect = (function() {
 			for (var i = 0; i < numClasses; ++i) {
 		        var r1 = groups[i];
 		        
-		        for (var j = 0; j < numClasses; ++j) {
-		        	if (i === j) continue;
+		        for (var j = i + 1; j < numClasses; ++j) {
 		            var r2 = groups[j];
-		            var dx = r2[2] * 0.2;
-		            var dy = r2[3] * 0.2;
 		            
-		            if (r1[0] >= r2[0] - dx &&
-		                r1[1] >= r2[1] - dy &&
-		                r1[0] + r1[2] <= r2[0] + r2[2] + dx &&
-		                r1[1] + r1[3] <= r2[1] + r2[3] + dy) {
+		            var dx = r2[2] * confluence;// * 0.2;
+		            var dy = r2[3] * confluence;// * 0.2;
+		            
+		            // Not antisymmetric, must check both r1 > r2 and r2 > r1:
+		            if ((r1[0] >= r2[0] - dx &&
+		                 r1[1] >= r2[1] - dy &&
+		                 r1[0] + r1[2] <= r2[0] + r2[2] + dx &&
+		                 r1[1] + r1[3] <= r2[1] + r2[3] + dy) ||
+		                (r2[0] >= r1[0] - dx &&
+		                 r2[1] >= r1[1] - dy &&
+		                 r2[0] + r2[2] <= r1[0] + r1[2] + dx &&
+		                 r2[1] + r2[3] <= r1[1] + r1[3] + dy)) {
 		            	break;
 		            }
 		        }
@@ -700,7 +683,8 @@ var objectdetect = (function() {
 		 * @return Grouped rectangles
 		 */
 		detector.prototype.detect = function(image, group, stepSize, Roi) {
-			if (!stepSize) stepSize = 1;
+			if (stepSize === undefined) stepSize = 1;
+			if (group === undefined) group = 1;
 			
 			var width = this.canvas.width;
 			var height = this.canvas.height;
@@ -718,7 +702,7 @@ var objectdetect = (function() {
 				var scaledWidth = ~~(width / scale);
 				var scaledHeight = ~~(height / scale);
 				
-				if (scale == 1) {
+				if (scale === 1) {
 					this.scaledGray.set(this.gray);
 				} else {
 					this.scaledGray = objectdetect.rescaleImage(this.gray, width, height, scale, this.scaledGray);
