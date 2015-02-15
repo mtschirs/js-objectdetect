@@ -36,15 +36,18 @@ The following list provides a runtime and detection performance comparison among
 [js-objectdetect](https://github.com/mtschirs/js-objectdetect) | **17.5** / **16.9** | 50 / 50 | 2.86 / 2.96
 [jsfeat](https://github.com/inspirit/jsfeat)<sup>1</sup> | 9.4 / 6.3 | 30 / 30 | 3.18 / 4.75
 [tracking.js](https://github.com/eduardolundgren/tracking.js) | 7.7 / 8.97 | 48 / 48 | 6.24 / 5.35
-[CCV](https://github.com/liuliu/ccv)<sup>2</sup> | 2.2 / 4.4 | 8 / 8 | 2.22 / 1.80
+[Beyond Reality Face](https://www.beyond-reality-face.com/)<sup>2</sup> | 7.4 / 1.7 | 41 / 41 | 5.50 / 23.98
+[CCV](https://github.com/liuliu/ccv)<sup>3</sup> | 2.2 / 4.4 | 8 / 8 | 2.22 / 1.80
 
-[js-objectdetect](https://github.com/mtschirs/js-objectdetect) | [tracking.js](https://github.com/eduardolundgren/tracking.js) | [jsfeat](https://github.com/inspirit/jsfeat)<sup>1</sup> | [CCV](https://github.com/liuliu/ccv)<sup>2</sup>
---- | --- | --- | ---
-![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsobjectdetect.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_trackingjs.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsfeat.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_ccv.png)
+[js-objectdetect](https://github.com/mtschirs/js-objectdetect) | [tracking.js](https://github.com/eduardolundgren/tracking.js) | [jsfeat](https://github.com/inspirit/jsfeat)<sup>1</sup> | [Beyond Reality Face](https://www.beyond-reality-face.com/)<sup>2</sup> | [CCV](https://github.com/liuliu/ccv)<sup>3</sup>
+:---:|:---:|:---:|:---:|:---:
+![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsobjectdetect.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_trackingjs.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_jsfeat.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_brf_nxt.png) | ![Detections](http://mtschirs.github.io/js-objectdetect/media/result_ccv.png)
 
 <sup>1</sup> also [auduno/clmtrackr](https://github.com/auduno/clmtrackr), [camgaze.js](https://github.com/wallarelvo/camgaze.js). Based on an older version of [js-objectdetect](https://github.com/mtschirs/js-objectdetect). 
 
-<sup>2</sup> also [jquery.facedetection](https://github.com/jaysalvat/jquery.facedetection), [neave/face-detection](https://github.com/neave/face-detection), [wesbos/HTML5-Face-Detection](https://github.com/wesbos/HTML5-Face-Detection), [auduno/headtrackr](https://github.com/auduno/headtrackr)
+<sup>2</sup> Proprietary software, tested with v3.0.15. Fails to compile asm module in FF.
+
+<sup>3</sup> also [jquery.facedetection](https://github.com/jaysalvat/jquery.facedetection), [neave/face-detection](https://github.com/neave/face-detection), [wesbos/HTML5-Face-Detection](https://github.com/wesbos/HTML5-Face-Detection), [auduno/headtrackr](https://github.com/auduno/headtrackr)
 
 ### Usage - jQuery ###
 
