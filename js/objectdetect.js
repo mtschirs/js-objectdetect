@@ -371,14 +371,12 @@ var objectdetect = (function() {
 		 * 
 		 * @param {Array}        src    Cascade classifier
 		 * @param {Number}       width  Width of the source image
-		 * @param {Number}       height Height of the source image
 		 * @param {Float32Array} [dst]  Compiled cascade classifier
 		 * 
 		 * @return {Float32Array} Compiled cascade classifier
 		 */
-		compileClassifier = function(src, width, height, scale, dst) {
+		compileClassifier = function(src, width, scale, dst) {
 			width += 1;
-			height += 1;
 			if (!dst) dst = new Float32Array(src.length);
 			var dstUint32 = new Uint32Array(dst.buffer);
 			
@@ -666,8 +664,7 @@ var objectdetect = (function() {
 			var scale = 1;
 			for (var i = 0; i < this.numScales; ++i) {
 				var scaledWidth = ~~(width / scale);
-				var scaledHeight = ~~(height / scale);
-				this.compiledClassifiers[i] = objectdetect.compileClassifier(classifier, scaledWidth, scaledHeight);
+				this.compiledClassifiers[i] = objectdetect.compileClassifier(classifier, scaledWidth);
 				scale *= scaleFactor;
 			}
 		}
@@ -678,19 +675,19 @@ var objectdetect = (function() {
 		 * @param image          HTML image, video or canvas element
 		 * @param [group]        Detection results will be grouped by proximity
 		 * @param [stepSize]     Increase for performance
-		 * @param [Roi]          Region of interest, i.e. search window
+		 * @param [roi]          Region of interest, i.e. search window
 		 * 
 		 * @return Grouped rectangles
 		 */
-		detector.prototype.detect = function(image, group, stepSize, Roi) {
+		detector.prototype.detect = function(image, group, stepSize, roi, canny) {
 			if (stepSize === undefined) stepSize = 1;
 			if (group === undefined) group = 1;
 			
 			var width = this.canvas.width;
 			var height = this.canvas.height;
 			
-			if (Roi) 
-				this.context.drawImage(image, Roi[0], Roi[1], Roi[2], Roi[3], 0, 0, width, height);
+			if (roi) 
+				this.context.drawImage(image, roi[0], roi[1], roi[2], roi[3], 0, 0, width, height);
 			else
 				this.context.drawImage(image, 0, 0, width, height);
 			var imageData = this.context.getImageData(0, 0, width, height).data;
@@ -708,17 +705,22 @@ var objectdetect = (function() {
 					this.scaledGray = objectdetect.rescaleImage(this.gray, width, height, scale, this.scaledGray);
 				}
 				
+				if (canny) {
+					this.canny = objectdetect.computeCanny(this.scaledGray, scaledWidth, scaledHeight, this.canny);
+					this.cannySat = objectdetect.computeSat(this.canny, scaledWidth, scaledHeight, this.cannySat);
+				}
+				
 				this.sat = objectdetect.computeSat(this.scaledGray, scaledWidth, scaledHeight, this.sat);
 				this.ssat = objectdetect.computeSquaredSat(this.scaledGray, scaledWidth, scaledHeight, this.ssat);
 				if (this.tilted) this.rsat = objectdetect.computeRsat(this.scaledGray, scaledWidth, scaledHeight, this.rsat);
-				this.cannysat = undefined;
 
-				var newRects = objectdetect.detect(this.sat, this.rsat, this.ssat, this.cannysat, scaledWidth, scaledHeight, stepSize, this.compiledClassifiers[i]);
+				var newRects = objectdetect.detect(this.sat, this.rsat, this.ssat, this.cannySat, scaledWidth, scaledHeight, stepSize, this.compiledClassifiers[i]);
 				for (var j = newRects.length - 1; j >= 0; --j) {
-					newRects[j][0] *= width / scaledWidth;
-					newRects[j][1] *= height / scaledHeight;
-					newRects[j][2] *= width / scaledWidth;
-					newRects[j][3] *= height / scaledHeight;
+					var newRect = newRects[j];
+					newRect[0] *= scale;
+					newRect[1] *= scale;
+					newRect[2] *= scale;
+					newRect[3] *= scale;
 				}
 				rects = rects.concat(newRects);
 				
