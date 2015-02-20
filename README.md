@@ -49,24 +49,10 @@ The following list provides a runtime and detection performance comparison among
 
 <sup>3</sup> also [jquery.facedetection](https://github.com/jaysalvat/jquery.facedetection), [neave/face-detection](https://github.com/neave/face-detection), [wesbos/HTML5-Face-Detection](https://github.com/wesbos/HTML5-Face-Detection), [auduno/headtrackr](https://github.com/auduno/headtrackr)
 
-### Usage - jQuery ###
+### Usage ###
 
-The provided jQuery plugin provides a simple interface to the object detection library:
-	
-	<script src="js/objectdetect.js"></script>
-	<script src="js/objectdetect.frontalface.js"></script>
-
-	<script src="js/jquery.js"></script>
-	<script src="js/jquery.objectdetect.js"></script>
-
-	<img id="image" src="image.png">
-	<script>
-		$("#image").objectdetect("all", {classifier: objectdetect.frontalface}, function(coords) {
-			...
-		});
-	</script>
-
-More examples can be found in [the repository](https://github.com/mtschirs/js-objectdetect/tree/master/examples).
+Examples can be found in [the repository](https://github.com/mtschirs/js-objectdetect/tree/master/examples).
+For documentation, refer to the JSDoc in the source files.
 
 ### Download ###
 
@@ -77,8 +63,7 @@ More examples can be found in [the repository](https://github.com/mtschirs/js-ob
 	- [objectdetect.eye.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.eye.js)
 	- [objectdetect.handopen.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handopen.js)
 	- [objectdetect.handfist.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/objectdetect.handfist.js)
-- The jQuery plugin:
-	- [jquery.objectdetect.js](https://raw.github.com/mtschirs/js-objectdetect/master/js/jquery.objectdetect.js)
+	- ...
 
 ### License ###
 
