@@ -2,9 +2,8 @@
   "name": "js-objectdetect",
   "version": "0.0.1",
   "homepage": "https://github.com/mtschirs/js-objectdetect",
-  "authors": [
-    "mtschirs (http://www.uni-ulm.de/)"
-  ],
+  "authors": [ "mtschirs (http://www.uni-ulm.de/)" ],
+  "repository": { "type": "git", "url": "git://github.com/mtschirs/js-objectdetect" },
   "description": "computer vision in your browser - javascript real-time object detection",
   "main": "objectdetect.js",
   "keywords": [
