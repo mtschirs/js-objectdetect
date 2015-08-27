@@ -1,0 +1,22 @@
+{
+  "name": "js-objectdetect",
+  "version": "0.0.1",
+  "homepage": "https://github.com/mtschirs/js-objectdetect",
+  "authors": [
+    "mtschirs (http://www.uni-ulm.de/)"
+  ],
+  "description": "computer vision in your browser - javascript real-time object detection",
+  "main": "objectdetect.js",
+  "keywords": [
+    "computer vision",
+    "object detection"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
