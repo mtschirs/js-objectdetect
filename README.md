@@ -31,8 +31,8 @@ The following list provides a runtime and detection performance comparison among
 
 *Last updated on February 7, 2015*
 
- Chrome 40 / FF 35  | Detections/Second | Detections | Seconds
-------------------- |:-----------------:|:----------:|:-------:
+ Chrome 40 / FF 35  | Detections per Second | Detections | Seconds
+------------------- |:---------------------:|:----------:|:-------:
 [js-objectdetect](https://github.com/mtschirs/js-objectdetect) | **17.5** / **16.9** | 50 / 50 | 2.86 / 2.96
 [jsfeat](https://github.com/inspirit/jsfeat)<sup>1</sup> | 9.4 / 6.3 | 30 / 30 | 3.18 / 4.75
 [tracking.js](https://github.com/eduardolundgren/tracking.js) | 7.7 / 8.97 | 48 / 48 | 6.24 / 5.35
