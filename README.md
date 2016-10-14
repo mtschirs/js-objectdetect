@@ -4,7 +4,7 @@
 
 This library is based on the work of Paul Viola and Rainer Lienhart and compatible to stump based HAAR cascade classifiers used by the OpenCV object detector.
 
-Watch [this video](http://www.youtube.com/watch?v=v0tbzTkJYZw) for a short demonstration.
+Watch [this video](https://www.youtube.com/watch?v=v0tbzTkJYZw) for a short demonstration.
 
 All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 
@@ -14,11 +14,11 @@ All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 
 The following demos are available (Internet Explorer and iOS not supported):
 
-[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif) Rotating a 3D object via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
+[![gesture input](https://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif) Rotating a 3D object via hand gesture](https://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
 
-[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif) Scrolling a website via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
+[![gesture scroll](https://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif) Scrolling a website via hand gesture](https://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
 
-[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif) Trying out various sunglasses](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
+[![glasses](https://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif) Trying out various sunglasses](https://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
 
 ### Classifiers ###
 
