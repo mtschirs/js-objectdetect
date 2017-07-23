@@ -14,11 +14,11 @@ All modern browsers including IE 9+, Safari and Opera Mobile are supported.
 
 The following demos are available (Internet Explorer and iOS not supported):
 
-[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif) Rotating a 3D object via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
+[![gesture input](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_input.gif) Rotating a 3D object via hand gesture](https://mtschirs.github.com/js-objectdetect/examples/example_gesture_input.htm)
 
-[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif) Scrolling a website via hand gesture](http://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
+[![gesture scroll](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_gesture_scroll.gif) Scrolling a website via hand gesture](https://mtschirs.github.com/js-objectdetect/examples/example_gesture_scroll.htm)
 
-[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif) Trying out various sunglasses](http://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
+[![glasses](http://mtschirs.github.io/js-objectdetect/media/js_objectdetect_glasses.gif) Trying out various sunglasses](https://mtschirs.github.com/js-objectdetect/examples/example_sunglasses.htm)
 
 ### Classifiers ###
 
