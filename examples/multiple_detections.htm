@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <script src="//mtschirs.github.io/js-objectdetect/examples/js/compatibility.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.eye.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.frontalcatface.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.frontalface_alt.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.frontalface.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.fullbody.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.handfist.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.handopen.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.mouth.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.profileface.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.smile.js"></script>
+  <script src="//mtschirs.github.io/js-objectdetect/js/objectdetect.upperbody.js"></script>
+
+  <script src="//mtschirs.github.io/js-objectdetect/examples/js/jquery.js"></script>
+
+  <style type="text/css">
+    label {
+      display: inline-block;
+      width: 200px;
+    }
+  </style>
+  <title>Multiple detections example</title>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+
+  <br>
+
+  <label><input id="eye-checkbox"             type="checkbox" onclick="check('eye')">eye</label>
+  <label><input id="frontalcatface-checkbox"  type="checkbox" onclick="check('frontalcatface')">frontalcatface</label>
+  <label><input id="frontalface_alt-checkbox" type="checkbox" onclick="check('frontalface_alt')">frontalface_alt</label><br>
+  <label><input id="frontalface-checkbox"     type="checkbox" onclick="check('frontalface')">frontalface</label>
+  <label><input id="fullbody-checkbox"        type="checkbox" onclick="check('fullbody')">fullbody</label>
+  <label><input id="handfist-checkbox"        type="checkbox" onclick="check('handfist')">handfist</label><br>
+  <label><input id="handopen-checkbox"        type="checkbox" onclick="check('handopen')">handopen</label>
+  <label><input id="mouth-checkbox"           type="checkbox" onclick="check('mouth')">mouth</label>
+  <label><input id="profileface-checkbox"     type="checkbox" onclick="check('profileface')">profileface</label><br>
+  <label><input id="smile-checkbox"           type="checkbox" onclick="check('smile')">smile</label>
+  <label><input id="upperbody-checkbox"       type="checkbox" onclick="check('upperbody')">upperbody</label>
+
+  <br>
+
+  <script>
+    function play() {
+      compatibility.requestAnimationFrame(function () {
+        setTimeout(play, LATENCY)
+      })
+
+      if (video.paused) {
+        video.play()
+      }
+
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+        return
+      }
+
+      /* Prepare the detectors once the video dimensions are known: */
+      if (!detectors) {
+        var width = ~~(80 * video.videoWidth / video.videoHeight)
+        var height = 80
+        detectors = DETECTORS.map(function (metaDetector) {
+          var detector = new objectdetect.detector(width, height, 1.1, objectdetect[metaDetector.detectorName])
+          detector.metadata = metaDetector
+          return detector
+        })
+
+        /* Draw video overlay: */
+        canvas.width = ~~(480 * video.videoWidth / video.videoHeight)
+        canvas.height = 480
+      }
+
+      context.drawImage(video, 0, 0, canvas.clientWidth, canvas.clientHeight)
+
+      detectors.forEach(function (detector) {
+        if (!detector.metadata.isActive) {
+          return
+        }
+        detector.detect(video, 1).forEach(function (coord) {
+          /* Rescale coordinates from detector to video coordinate space: */
+          coord[0] *= video.videoWidth  / detector.canvas.width
+          coord[1] *= video.videoHeight / detector.canvas.height
+          coord[2] *= video.videoWidth  / detector.canvas.width
+          coord[3] *= video.videoHeight / detector.canvas.height
+
+          /* Draw coordinates on video overlay: */
+          context.beginPath()
+          context.lineWidth = 2
+          context.rect(
+            coord[0] / video.videoWidth  * canvas.clientWidth,
+            coord[1] / video.videoHeight * canvas.clientHeight,
+            coord[2] / video.videoWidth  * canvas.clientWidth,
+            coord[3] / video.videoHeight * canvas.clientHeight
+          )
+
+          // Use the metadata previously set for custom rendering
+          context.strokeStyle = detector.metadata.frameColor
+          context.fillStyle = detector.metadata.frameColor
+          context.fillText(
+            detector.metadata.detectorName,
+            coord[0] / video.videoWidth  * canvas.clientWidth,
+            coord[1] / video.videoHeight * canvas.clientHeight - 5
+          )
+
+          context.stroke()
+        })
+      })
+    }
+  </script>
+
+  <script>
+    var LATENCY = 1000 / 60
+    var DETECTORS = [
+        { isActive: false, detectorName: 'eye',             frameColor: 'red'}
+      , { isActive: false, detectorName: 'frontalcatface',  frameColor: 'blue'}
+      , { isActive: false, detectorName: 'frontalface_alt', frameColor: 'green'}
+      , { isActive: true,  detectorName: 'frontalface',     frameColor: 'yellow'}
+      , { isActive: false, detectorName: 'fullbody',        frameColor: 'pink'}
+      , { isActive: false, detectorName: 'handfist',        frameColor: 'black'}
+      , { isActive: false, detectorName: 'handopen',        frameColor: 'maroon'}
+      , { isActive: false, detectorName: 'mouth',           frameColor: 'orange'}
+      , { isActive: false, detectorName: 'profileface',     frameColor: 'teal'}
+      , { isActive: false, detectorName: 'smile',           frameColor: 'sienna'}
+      , { isActive: false, detectorName: 'upperbody',       frameColor: 'violet'}
+    ]
+
+    var canvas = document.getElementById('canvas')
+    var context = canvas.getContext('2d')
+    var video = document.createElement('video')
+    var detectors = null
+
+    try {
+      compatibility.getUserMedia({ video: true }, function(stream) {
+        try {
+          video.src = compatibility.URL.createObjectURL(stream)
+        } catch (error) {
+          video.src = stream
+        }
+        compatibility.requestAnimationFrame(play)
+      }, function (error) {
+        alert("WebRTC not available")
+      })
+    } catch (error) {
+      alert(error)
+    }
+  </script>
+
+  <script type="text/javascript">
+    // This part is only dealing with checking/unchecking boxes
+    DETECTORS.forEach(function (detector) {
+      document.getElementById(detector.detectorName + '-checkbox').checked = detector.isActive
+    })
+
+    function check(what) {
+      var checkbox = document.getElementById(what + '-checkbox')
+      DETECTORS[({
+        'eye'            : 0,
+        'frontalcatface' : 1,
+        'frontalface_alt': 2,
+        'frontalface'    : 3,
+        'fullbody'       : 4,
+        'handfist'       : 5,
+        'handopen'       : 6,
+        'mouth'          : 7,
+        'profileface'    : 8,
+        'smile'          : 9,
+        'upperbody'      : 10
+      })[what]].isActive = checkbox.checked
+    }
+  </script>
+</body>
+</html>
